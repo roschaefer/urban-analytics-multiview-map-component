@@ -21,7 +21,7 @@
     "eslint-plugin-react": "^3.5.1",
     "gulp": "^3.9.0",
     "react": "^0.14.0",
-    "react-component-gulp-tasks": "^0.7.6",
+    "react-component-gulp-tasks": "git+https://git@github.com/kimxogus/react-component-gulp-tasks.git",
     "react-dom": "^0.14.0"
   },
   "peerDependencies": {
