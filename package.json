@@ -1,6 +1,6 @@
 {
   "name": "urban-analytics-multiview-map-component",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Multiview Map Component",
   "main": "lib/MultiviewMapComponent.js",
   "author": "Robert Schäfer",
