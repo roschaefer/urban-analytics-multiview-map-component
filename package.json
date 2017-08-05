@@ -20,9 +20,11 @@
     "eslint": "^4.3.0",
     "eslint-plugin-react": "^7.1.0",
     "gulp": "^3.9.1",
+    "leaflet": "^1.1.0",
     "react": "^15.6.1",
     "react-component-gulp-tasks": "git+https://git@github.com/kimxogus/react-component-gulp-tasks.git",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "react-leaflet": "^1.4.1"
   },
   "peerDependencies": {
     "react": "^15.6.1"
