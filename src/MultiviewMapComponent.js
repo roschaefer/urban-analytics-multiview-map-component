@@ -1,22 +1,27 @@
 import React, { Component }  from 'react'
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet'
+import { Map, TileLayer, Polygon, GeoJSON } from 'react-leaflet'
 
 class MultiviewMapComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       context: props.context,
+      geojson: null,
+      color: 'red',
       featureId: '',
       lat: 51.3,
       lng: 10,
       zoom: 5.5,
     };
     // Subscribe to featureId events.
-    this.state.context.subscribe(this, this.onFeatureId);
+    this.state.context.subscribe(this, this.onChange);
   }
-  onFeatureId(featureId, that) {
+  onChange(context, that) {
     // Update the state value for featureId.
-    that.setState({ featureId: featureId });
+    that.setState({
+      featureId: context.featureId,
+      geojson: context.geometry
+    });
   }
   render() {
     const position = [this.state.lat, this.state.lng];
@@ -28,6 +33,10 @@ class MultiviewMapComponent extends Component {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
+        { this.state.geojson  && 
+        <GeoJSON data={this.state.geojson }>
+        </GeoJSON>
+        }
       </Map>
     </div>
     );

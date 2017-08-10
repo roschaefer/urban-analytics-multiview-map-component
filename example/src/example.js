@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var MultiviewMapComponent = require('urban-analytics-multiview-map-component');
+var geojson = require('../data/berlin.json');
 
 var App = React.createClass({
 	render () {
@@ -14,13 +15,16 @@ var App = React.createClass({
 
 var PublisherSubscriberManager = {
   subscribers: [],
+  featureId: 42,
+  geometry: geojson,
   subscribe: function(parent, callback) {
     this.subscribers.push({ parent: parent, callback: callback });
   },
-  featureId: function(name) {
+  notify: function() {
+    var that = this;
     // Notify subscribers of event.
     this.subscribers.forEach(function(subscriber) {
-      subscriber.callback(name, subscriber.parent);
+      subscriber.callback(that, subscriber.parent);
     });
   }
 };
@@ -29,7 +33,7 @@ ReactDOM.render(React.createElement(MultiviewMapComponent, { context: PublisherS
 
 document.addEventListener("DOMContentLoaded", function(event) {
   setTimeout(function() {
-    PublisherSubscriberManager.featureId('I am a featureId');
+    PublisherSubscriberManager.notify();
   }, 0);
   // Change the box featureId every few seconds.
 });
