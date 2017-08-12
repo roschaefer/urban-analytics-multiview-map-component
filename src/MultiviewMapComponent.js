@@ -23,22 +23,25 @@ class MultiviewMapComponent extends Component {
       geojson: context.geometry
     });
   }
+  hasGeometry(){
+    return this.state.geojson != null;
+  }
   render() {
     const position = [this.state.lat, this.state.lng];
     return (
       <div>
         <span>Selected feature ID: <strong>{this.state.featureId}</strong></span>
-      <Map center={position} zoom={this.state.zoom}>
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-        />
-        { this.state.geojson  && 
-        <GeoJSON data={this.state.geojson }>
-        </GeoJSON>
-        }
-      </Map>
-    </div>
+        <Map center={position} zoom={this.state.zoom}>
+          <TileLayer
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+          />
+          { this.hasGeometry() &&
+              <GeoJSON data={this.state.geojson}>
+              </GeoJSON>
+          }
+        </Map>
+      </div>
     );
   }
 }

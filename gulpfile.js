@@ -12,32 +12,25 @@ var initGulpTasks = require('react-component-gulp-tasks');
 
 var taskConfig = {
 
-	component: {
-		name: 'MultiviewMapComponent',
-		dependencies: [
-			'classnames',
-			'react',
+  component : {
+    name : 'MultiviewMapComponent',
+    dependencies : [
+      'classnames',
+      'react',
       'react-dom',
       'react-leaflet',
       'leaflet',
-		],
-		lib: 'lib'
-	},
+    ],
+    lib : 'lib'
+  },
 
-	example: {
-		src: 'example/src',
-		dist: 'example/dist',
-		files: [
-			'index.html',
-			'.gitignore'
-		],
-		scripts: [
-			'example.js'
-		],
-		less: [
-			'example.less'
-		]
-	}
+  example : {
+    src : 'example/src',
+    dist : 'example/dist',
+    files : [ 'berlin.json', 'index.html', '.gitignore' ],
+    scripts : [ 'PublisherSubscriberManager.js', 'example.js' ],
+    less : ['example.less']
+  }
 
 };
 
