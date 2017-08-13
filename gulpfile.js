@@ -28,7 +28,7 @@ var taskConfig = {
     src : 'example/src',
     dist : 'example/dist',
     files : [ 'berlin.json', 'index.html', '.gitignore' ],
-    scripts : [ 'PublisherSubscriberManager.js', 'example.js' ],
+    scripts : [ 'example.js' ],
     less : ['example.less']
   }
 

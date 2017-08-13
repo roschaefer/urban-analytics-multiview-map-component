@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+import Observable from './Observable';
 var MultiviewMapComponent = require('urban-analytics-multiview-map-component');
-import PublisherSubscriberManager from './PublisherSubscriberManager';
 
 var App = React.createClass({
 	render () {
@@ -13,15 +13,12 @@ var App = React.createClass({
 	}
 });
 
-var psm = new PublisherSubscriberManager();
-psm.featureId = 42;
+var observable = new Observable();
 
-fetch('berlin.json').then((resp) => resp.json()).then((response) => {
-  console.log(response);
-  psm.geometry = response;
-}).catch((err) => {
-  console.log(err);
-});
 
-ReactDOM.render(React.createElement(MultiviewMapComponent, { context: psm }), document.getElementById('map-component'));
+ReactDOM.render(React.createElement(MultiviewMapComponent, { context: observable }), document.getElementById('map-component'));
+setTimeout(function() {
+	observable.featureId = 42;
+	observable.geojsonUrl = 'berlin.json';
+}, 1000);
 

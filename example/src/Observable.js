@@ -1,7 +1,7 @@
-export class PublisherSubscriberManager {
+export class Observable {
     constructor() {
         this._featureId = '';
-        this._geometry = null;
+        this._geojsonUrl = null;
         this.subscribers = [];
     }
     get featureId() {
@@ -11,11 +11,11 @@ export class PublisherSubscriberManager {
         this._featureId = theFeatureId;
         this.notify();
     }
-    get geometry() {
-        return this._geometry;
+    get geojsonUrl() {
+        return this._geojsonUrl;
     }
-    set geometry(theGeometry) {
-        this._geometry = theGeometry;
+    set geojsonUrl(theGeometry) {
+        this._geojsonUrl = theGeometry;
         this.notify();
     }
     subscribe(parent, callback) {
@@ -27,4 +27,4 @@ export class PublisherSubscriberManager {
         });
     }
 }
-export default PublisherSubscriberManager;
+export default Observable;
