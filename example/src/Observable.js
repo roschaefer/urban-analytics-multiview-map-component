@@ -14,8 +14,9 @@ export class Observable {
     get geojsonUrl() {
         return this._geojsonUrl;
     }
-    set geojsonUrl(theGeometry) {
-        this._geojsonUrl = theGeometry;
+    set geojsonUrl(theGeojsonUrl) {
+        this._geojsonUrl = theGeojsonUrl;
+		console.log('changed geojsonurl', this._geojsonUrl);
         this.notify();
     }
     subscribe(parent, callback) {

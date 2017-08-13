@@ -27,7 +27,7 @@ var taskConfig = {
   example : {
     src : 'example/src',
     dist : 'example/dist',
-    files : [ 'berlin.json', 'index.html', '.gitignore' ],
+    files : [ 'bundeslaender.geojson', 'berlin.geojson', 'index.html', '.gitignore' ],
     scripts : [ 'example.js' ],
     less : ['example.less']
   }
