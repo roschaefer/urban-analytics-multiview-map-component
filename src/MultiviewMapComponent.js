@@ -23,7 +23,9 @@ class MultiviewMapComponent extends Component {
 		// Update the state value for featureId.
 		console.log('update the react map');
 		if(context.geojsonUrl != null){
-			fetch(context.geojsonUrl).then((resp) => resp.json()).then((response) => {
+			fetch(context.geojsonUrl, {
+				credentials: "same-origin"
+			}).then((resp) => resp.json()).then((response) => {
 				that.setState({
 					featureId: context.featureId,
 					geojsonUrl: context.geojsonUrl,
