@@ -52,7 +52,7 @@ class MultiviewMapComponent extends Component {
 
 		})	
 	}
-	positionsArray(){
+	features(){
 		let result = this.state.geojson ? this.state.geojson.features: [];
 		result = result.map((feature) => {
 			console.log(feature);
@@ -67,9 +67,18 @@ class MultiviewMapComponent extends Component {
 				default:
 					console.log(feature);
 			}
-			return coordinates;
+			feature.geometry.coordinates = coordinates;
+			return feature;
 		});
 		return result;
+	}
+	polygonColor(feature){
+		const selectedFeatureId = this.state.featureId;
+		const externalId = feature.properties && feature.properties.external_id;
+		return (
+			(selectedFeatureId == feature.id) || // yes == is intended
+			(selectedFeatureId == externalId)
+		) ? 'red' : 'blue';
 	}
 	render() {
 		const position = [this.state.lat, this.state.lng];
@@ -81,12 +90,12 @@ class MultiviewMapComponent extends Component {
 			attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 			url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 			/>
-			{ this.positionsArray().map((positions, i)=> {
+			{ this.features().map((feature, i)=> {
 				return (
 					<Polygon
 					key={i}
-					positions={positions}
-					color='red'>
+					positions={feature.geometry.coordinates}
+					color={this.polygonColor(feature)}>
 					</Polygon >
 				)
 			})

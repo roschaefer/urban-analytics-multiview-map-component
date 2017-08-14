@@ -18,7 +18,7 @@ var observable = new Observable();
 
 ReactDOM.render(React.createElement(MultiviewMapComponent, { context: observable }), document.getElementById('map-component'));
 setTimeout(function() {
-	observable.featureId = 42;
+	observable.featureId = '1';
 	observable.geojsonUrl = 'bundeslaender.geojson';
 }, 1000);
 
