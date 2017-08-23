@@ -24,5 +24,5 @@ ReactDom.render(
 
 setTimeout(function() {
 	multiviewState.featureId = 1;
-	multiviewState.geojsonUrl = 'example/data/bundeslaender.geojson';
+	multiviewState.geojsonUrl = 'bundeslaender.geojson';
 }, 1000);

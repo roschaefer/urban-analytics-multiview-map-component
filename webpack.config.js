@@ -5,7 +5,7 @@ module.exports = {
         './example/src/App.jsx'
     ],
     output: {
-        path: __dirname + "/dist",
+        path: __dirname + "/example/dist",
         filename: "multiview-map-component.js"
     },
     devtool: "source-map",
