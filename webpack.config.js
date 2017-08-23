@@ -8,8 +8,15 @@ module.exports = {
         path: __dirname,
         filename: "bundle.js"
     },
+    devtool: "source-map",
+    resolve: {
+        // Add '.ts' and '.tsx' as resolvable extensions.
+        extensions: [".ts", ".tsx", ".js", ".json"]
+    },
     module: {
-        loaders: [{
+        rules: [
+            { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+            {
             test: /\.jsx?$/,
             exclude: /node_modules/,
             loader: 'babel-loader',

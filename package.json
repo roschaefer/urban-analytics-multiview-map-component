@@ -10,14 +10,17 @@
   "author": "Azavea",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/react": "^16.0.4",
+    "@types/react-dom": "^15.5.4",
     "leaflet": "1.2.0",
-    "react": "15.6.1",
+    "react": "^15.6.1",
     "react-addons-shallow-compare": "15.6.0",
-    "react-dom": "15.6.1",
+    "react-dom": "^15.6.1",
     "react-leaflet": "1.6.3",
     "react-leaflet-control": "1.4.0"
   },
   "devDependencies": {
+    "awesome-typescript-loader": "^3.2.3",
     "babel": "6.23.0",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
@@ -32,6 +35,8 @@
     "eslint-plugin-import": "2.7.0",
     "eslint-plugin-jsx-a11y": "6.0.2",
     "eslint-plugin-react": "7.3.0",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.4.2",
     "webpack": "3.5.5",
     "webpack-dev-server": "2.7.1"
   },
