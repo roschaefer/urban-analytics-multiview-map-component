@@ -2,11 +2,11 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: [
-        './App.jsx'
+        './example/src/App.jsx'
     ],
     output: {
-        path: __dirname,
-        filename: "bundle.js"
+        path: __dirname + "/dist",
+        filename: "multiview-map-component.js"
     },
     devtool: "source-map",
     resolve: {

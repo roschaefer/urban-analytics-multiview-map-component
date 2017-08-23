@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { MultiviewMap } from './src/components/MultiviewMap';
-import { MultiviewState } from "./src/MultiviewState";
+import { MultiviewMap } from '../../src/components/MultiviewMap';
+import { MultiviewState } from "../../src/MultiviewState";
 
 let multiviewState = new MultiviewState();
 
@@ -19,10 +19,10 @@ const props: MultiviewMapProps = {
 }
 ReactDom.render(
     <MultiviewMap context={multiviewState}/>,
-    document.getElementById('mount')
+    document.getElementById('multiview-map-component')
 );
 
 setTimeout(function() {
 	multiviewState.featureId = 1;
-	multiviewState.geojsonUrl = 'data/bundeslaender.geojson';
+	multiviewState.geojsonUrl = 'example/data/bundeslaender.geojson';
 }, 1000);
