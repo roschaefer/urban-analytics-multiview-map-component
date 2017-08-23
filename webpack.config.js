@@ -1,12 +1,20 @@
+var path = require('path')
 const webpack = require('webpack');
+const PATHS = {
+  src: path.join(__dirname, './src'),
+  build: path.join(__dirname, './dist')
+}
+
 
 module.exports = {
-    entry: [
-        './example/src/App.jsx'
-    ],
+    entry: {
+        "multiview-map-component": PATHS.src + '/App.jsx'
+    },
     output: {
-        path: __dirname + "/example/dist",
-        filename: "multiview-map-component.js"
+        path: PATHS.build,
+        filename: "[name].js",
+        library: 'MultiviewMapComponent',
+        libraryTarget: 'umd',
     },
     devtool: "source-map",
     resolve: {
@@ -40,4 +48,5 @@ module.exports = {
             index: '/',
         },
     },
+
 };

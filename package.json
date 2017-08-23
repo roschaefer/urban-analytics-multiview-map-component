@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf dist/*",
     "build": "webpack --progress --colors",
-    "start": "node_modules/.bin/webpack-dev-server --inline --hot --progress --colors --content-base example/dist/ --host 0.0.0.0 --port 7171",
+    "start": "node_modules/.bin/webpack-dev-server --inline --hot --progress --colors --host 0.0.0.0 --port 7171",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Azavea",
