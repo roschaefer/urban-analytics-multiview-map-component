@@ -8,7 +8,8 @@ const PATHS = {
 
 module.exports = {
     entry: {
-        "multiview-map-component": PATHS.src + '/App.jsx'
+        "multiview-map-component": PATHS.src + '/components/MultiviewMap.tsx',
+        "example": PATHS.src + '/App.jsx'
     },
     output: {
         path: PATHS.build,

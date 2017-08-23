@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { MultiviewMap } from './components/MultiviewMap';
+import { MultiviewMap } from '../dist/multiview-map-component.js';
 import { MultiviewState } from "./MultiviewState";
 
 let multiviewState = new MultiviewState();
