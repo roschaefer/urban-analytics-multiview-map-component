@@ -1,21 +1,28 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { Map, TileLayer } from 'react-leaflet';
-import Control from 'react-leaflet-control';
+import React from 'react';
+import ReactDom from 'react-dom';
 import { MultiviewMap } from './src/components/MultiviewMap';
+import { MultiviewState } from "./src/MultiviewState";
 
-export default class App extends Component {
+let multiviewState = new MultiviewState();
 
-    render() {
 
-        return (
-            <MultiviewMap>
-            </MultiviewMap>
-        );
-    }
+
+const props: MultiviewMapProps = {
+    context: multiviewState,
+    geojsonUrl: '',
+    geojson: null,
+    color: 'red',
+    featureId: null,
+    lat: 50,
+    lng: 50,
+    zoom: 4
 }
-
-render(
-    <App />,
+ReactDom.render(
+    <MultiviewMap context={multiviewState}/>,
     document.getElementById('mount')
 );
+
+setTimeout(function() {
+	multiviewState.featureId = 1;
+	multiviewState.geojsonUrl = 'data/bundeslaender.geojson';
+}, 1000);
