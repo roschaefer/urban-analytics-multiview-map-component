@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { MultiviewMap } from 'urban-analytics-multiview-map-component';
-import { MultiviewState } from "./MultiviewState";
+import { MultiviewMap, MultiviewState } from 'urban-analytics-multiview-map-component';
 
 let multiviewState = new MultiviewState();
 

@@ -1,5 +1,15 @@
 /// <reference types="react" />
 import * as React from "react";
+export declare class MultiviewState {
+    subscribers: any[];
+    private _featureId;
+    private _geojsonUrl;
+    constructor();
+    featureId: number;
+    geojsonUrl: string;
+    subscribe(parent: any, callback: () => void): void;
+    notify(): void;
+}
 export interface DebugViewProps {
     featureId: number;
     geojsonUrl: string;

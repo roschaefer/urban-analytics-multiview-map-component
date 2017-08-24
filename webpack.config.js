@@ -1,14 +1,14 @@
 var path = require('path')
 const webpack = require('webpack');
 const PATHS = {
-    src: path.join(__dirname, './src'),
-    build: path.join(__dirname, './dist')
+    src: path.join(__dirname, './src/'),
+    build: path.join(__dirname, './dist/')
 }
 
 
 module.exports = {
     entry: {
-        "urban-analytics-multiview-map-component": PATHS.src + '/components/MultiviewMap.tsx',
+        "urban-analytics-multiview-map-component": PATHS.src + 'Entry.ts',
     },
     output: {
         path: PATHS.build,
