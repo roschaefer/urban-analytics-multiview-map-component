@@ -28,7 +28,7 @@ export class DebugView extends React.Component<DebugViewProps, DebugViewProps> {
     });
   }
 
-	handleSubmit(event: any) {
+	handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		console.log('A featureId was submitted: ', this.state.featureId);
 		console.log('A geojsonUrl was submitted: ', this.state.geojsonUrl);
 		this.state.handleSubmit(this.state.featureId, this.state.geojsonUrl);
@@ -55,7 +55,7 @@ export class DebugView extends React.Component<DebugViewProps, DebugViewProps> {
 						value={this.state.geojsonUrl}
 						onChange={this.handleInputChange} />
 				</label>
-				<input type="submit" value="Submit" />
+				<button type="submit" value="Submit" />
 			</form>
 		);
 	}
