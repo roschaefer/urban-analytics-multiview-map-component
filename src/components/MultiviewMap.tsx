@@ -5,6 +5,9 @@ import { DebugView } from './DebugView';
 
 export interface  MultiviewMapProps {
     context: any;
+}
+export interface  MultiviewMapState {
+    context: any;
     geojsonUrl: string;
     geojson: any;
     color: string;
@@ -13,7 +16,7 @@ export interface  MultiviewMapProps {
     lng: number;
     zoom: number;
 }
-export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMapProps> {
+export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMapState> {
 	constructor(props: MultiviewMapProps) {
 		super(props);
 		this.state = {
