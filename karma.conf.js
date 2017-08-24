@@ -37,7 +37,7 @@ module.exports = function(config) {
         webpackServer: {
             noInfo: true
         },
-        reporters: ['nyan'],
+        reporters: ['mocha'],
 
         port: 9876,
         colors: true,
