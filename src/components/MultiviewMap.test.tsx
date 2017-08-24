@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
-import { MultiviewMap } from '../components/MultiviewMap';
+import { MultiviewMap } from './MultiviewMap';
 import { MultiviewState } from '../MultiviewState';
 
 describe("MultiviewMap", function() {
