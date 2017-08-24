@@ -25,7 +25,7 @@ module.exports = {
     module: {
         rules: [
             { test: /\.tsx?$/, loader: "awesome-typescript-loader", exclude: /node_modules/},
-            { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader',
+            { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader', exclude: /node_modules/,
                 query:
                 {
                     presets:['es2015', 'react'],
