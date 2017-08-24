@@ -92,12 +92,7 @@ export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMa
 		return result;
 	}
 	polygonColor(feature: any){
-		const selectedFeatureId = this.state.featureId;
-		const externalId = feature.properties && feature.properties.external_id;
-		return (
-			(selectedFeatureId == feature.id) || // yes == is intended
-			(selectedFeatureId == externalId)
-		) ? 'red' : 'blue';
+		return (this.state.featureId == feature.id) ? 'red' : 'blue';
 	}
 	render() {
 		const position: LatLngExpression = [this.state.lat, this.state.lng];
