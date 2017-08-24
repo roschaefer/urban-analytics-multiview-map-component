@@ -1,12 +1,16 @@
 import * as React from "react";
-export interface DebugViewProps {
+export interface FormData {
     featureId: number;
     geojsonUrl: string;
-    handleSubmit: (featureId: number, geojsonUrl: string) => void;
+}
+export interface Props {
+    featureId: number;
+    geojsonUrl: string;
+    handleSubmit: (formData: FormData) => void;
 }
 
-export class DebugView extends React.Component<DebugViewProps, DebugViewProps> {
-	constructor(props: DebugViewProps) {
+export class DebugView extends React.Component<Props, Props> {
+	constructor(props: Props) {
 		super(props);
 		this.state = {
 			featureId: props.featureId,
@@ -29,14 +33,14 @@ export class DebugView extends React.Component<DebugViewProps, DebugViewProps> {
   }
 
 	handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-		console.log('A featureId was submitted: ', this.state.featureId);
-		console.log('A geojsonUrl was submitted: ', this.state.geojsonUrl);
-		this.state.handleSubmit(this.state.featureId, this.state.geojsonUrl);
+		this.state.handleSubmit({
+            featureId: this.state.featureId,
+            geojsonUrl: this.state.geojsonUrl
+        });
 		event.preventDefault();
 	}
 
 	render() {
-		console.log('rendering the debug view');
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<label>

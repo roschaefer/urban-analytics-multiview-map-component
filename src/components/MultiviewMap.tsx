@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MapProps, Map, TileLayer, Polygon } from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';
-import { DebugView } from './DebugView';
+import * as DebugView from './DebugView';
 
 export interface  MultiviewMapProps {
     context: any;
@@ -55,11 +55,9 @@ export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMa
 			});
 		}
 	}
-	handleSubmit(featureId: number, geojsonUrl: string){
-		console.log('changedfeatureId', featureId);
-		console.log('changedGeojsonUrl', geojsonUrl);
-		this.state.context.featureId = featureId;
-		this.state.context.geojsonUrl = geojsonUrl;
+	handleSubmit(formData: DebugView.FormData){
+		this.state.context.featureId = formData.featureId;
+		this.state.context.geojsonUrl = formData.geojsonUrl;
 	}
 	reverseLongLat(coordinates: any, levels: number){
 		return coordinates.map((subcoordinates: any) =>{
@@ -119,11 +117,11 @@ export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMa
 				<span><strong>Feature Id:</strong> {this.state.featureId}.</span>
 			</div>
 			{ this.state.featureId && this.state.geojsonUrl &&
-				<DebugView
+				<DebugView.DebugView
 				featureId={this.state.featureId}
 				geojsonUrl={this.state.geojsonUrl}
-				handleSubmit={(featureId, geojsonUrl) => this.handleSubmit(featureId, geojsonUrl)}>
-				</DebugView>
+				handleSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
+				</DebugView.DebugView>
 			}
 			</div>
 		);

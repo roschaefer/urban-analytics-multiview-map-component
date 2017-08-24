@@ -17,6 +17,7 @@
   "scripts": {
     "clean": "rm -rf dist/*",
     "build": "webpack --progress --colors",
+    "build:watch": "webpack --progress --colors --watch",
     "test": "node_modules/karma-cli/bin/karma start"
   },
   "dependencies": {
