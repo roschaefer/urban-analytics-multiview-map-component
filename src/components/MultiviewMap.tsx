@@ -98,7 +98,7 @@ export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMa
 		const position: LatLngExpression = [this.state.lat, this.state.lng];
 		console.log('render all');
 		return (
-			<div>
+			<div className="multiview-map-component">
 			<Map center={position} zoom={this.state.zoom}>
 			<TileLayer
 			attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

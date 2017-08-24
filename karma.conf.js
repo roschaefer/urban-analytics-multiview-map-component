@@ -5,13 +5,17 @@ module.exports = function(config) {
         frameworks: ['mocha'],
         files: [
             'node_modules/babel-polyfill/dist/polyfill.js',
-            'src/**/*.test.js'
+            'src/**/*.test.tsx'
         ],
         preprocessors: {
-            'src/**/*.test.js': ['webpack', 'sourcemap']
+            'src/**/*.test.tsx': ['webpack', 'sourcemap']
         },
         webpack: {
             devtool: 'inline-source-map',
+            resolve: {
+                // Add '.ts' and '.tsx' as resolvable extensions.
+                extensions: [".ts", ".tsx", ".js", ".json"]
+            },
             module: {
                 rules: [
                     { test: /\.tsx?$/, loader: "awesome-typescript-loader", exclude: /node_modules/},

@@ -32,6 +32,9 @@
     "react-leaflet-control": "1.4.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.0.4",
+    "@types/enzyme": "^2.8.6",
+    "@types/mocha": "^2.2.42",
     "awesome-typescript-loader": "^3.2.3",
     "babel": "6.23.0",
     "babel-cli": "^6.26.0",
