@@ -59,7 +59,7 @@ export class DebugView extends React.Component<Props, Props> {
 						value={this.state.geojsonUrl}
 						onChange={this.handleInputChange} />
 				</label>
-				<button type="submit" value="Submit" />
+				<input type="submit" value="Submit" />
 			</form>
 		);
 	}
