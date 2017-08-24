@@ -1,17 +1,25 @@
 {
-  "name": "multiview-map-component",
-  "version": "0.1.0",
+  "name": "urban-analytics-multiview-map-component",
+  "version": "0.0.6",
   "description": "Multiview Map Component for Urban Analytics",
-  "main": "dist/multiview-map-component.js",
-  "types": "./dist/multiview-map-component.d.ts",
+  "main": "dist/urban-analytics-multiview-map-component.js",
+  "types": "./dist/urban-analytics-multiview-map-component.d.ts",
+  "author": "Robert Schäfer",
+  "homepage": "https://github.com/roschaefer/urban-analytics-multiview-map-component",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roschaefer/urban-analytics-multiview-map-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/roschaefer/urban-analytics-multiview-map-component/issues"
+  },
+  "license": "ISC",
   "scripts": {
     "clean": "rm -rf dist/*",
     "build": "webpack --progress --colors",
     "start": "node_modules/.bin/webpack-dev-server --inline --hot --progress --colors --host 0.0.0.0 --port 7171",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Robert Schäfer",
-  "license": "ISC",
   "dependencies": {
     "@types/leaflet": "^1.0.68",
     "@types/react": "^16.0.4",

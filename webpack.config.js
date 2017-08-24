@@ -8,12 +8,12 @@ const PATHS = {
 
 module.exports = {
     entry: {
-        "multiview-map-component": PATHS.src + '/components/MultiviewMap.tsx',
+        "urban-analytics-multiview-map-component": PATHS.src + '/components/MultiviewMap.tsx',
     },
     output: {
         path: PATHS.build,
         filename: "[name].js",
-        library: 'multiview-map-component',
+        library: '[name]',
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
@@ -46,5 +46,8 @@ module.exports = {
             index: '/',
         },
     },
-
+    externals: [
+        "react",
+        "react-dom"
+    ],
 };

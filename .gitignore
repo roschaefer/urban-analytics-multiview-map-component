@@ -1,4 +1,4 @@
 node_modules
 dist/*
-!dist/multiview-map-component.d.ts
+!dist/urban-analytics-multiview-map-component.d.ts
 
