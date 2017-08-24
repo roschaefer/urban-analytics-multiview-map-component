@@ -1,3 +1,4 @@
 node_modules
-dist
+dist/*
+!dist/multiview-map-component.d.ts
 
