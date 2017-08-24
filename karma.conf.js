@@ -5,11 +5,10 @@ module.exports = function(config) {
         frameworks: ['mocha'],
         files: [
             'node_modules/babel-polyfill/dist/polyfill.js',
-            'test/**/*.js'
+            'src/**/*.test.js'
         ],
         preprocessors: {
-            'src/public/AppEntry.js': ['webpack', 'sourcemap'],
-            'test/**/*.js': ['webpack', 'sourcemap']
+            'src/**/*.test.js': ['webpack', 'sourcemap']
         },
         webpack: {
             devtool: 'inline-source-map',
