@@ -6,11 +6,11 @@ let multiviewState = new MultiviewState();
 
 
 ReactDOM.render(
-    <MultiviewMap context={multiviewState}/>,
-    document.getElementById('multiview-map-component')
+  <MultiviewMap context={multiviewState}/>,
+  document.getElementById('multiview-map-component')
 );
 
 setTimeout(function() {
-	multiviewState.featureId = 1;
-	multiviewState.geojsonUrl = 'data/bundeslaender.geojson';
+  multiviewState.featureId = 1;
+  multiviewState.geojsonUrl = 'data/bundeslaender.geojson';
 }, 1000);
