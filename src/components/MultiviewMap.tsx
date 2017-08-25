@@ -1,6 +1,6 @@
 import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
-import { LatLngExpression } from 'leaflet';
+import * as Leaflet from 'leaflet';
 import * as DebugView from './DebugView';
 import { MultiviewState } from '../MultiviewState';
 
@@ -30,6 +30,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       lng: 10,
       zoom: 5.5,
     };
+    this.featureStyle = this.featureStyle.bind(this);
   }
   componentDidMount(){
     this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
@@ -57,11 +58,12 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.context.featureId = formData.featureId;
     this.state.context.geojsonUrl = formData.geojsonUrl;
   }
-  polygonColor(feature: any){
-    return (this.state.featureId == feature.id) ? 'red' : 'blue';
+  featureStyle(feature: any): Leaflet.PathOptions{
+    const color = (feature.id === this.state.featureId) ? 'red' : 'blue';
+    return { color };
   }
   render() {
-    const position: LatLngExpression = [this.state.lat, this.state.lng];
+    const position: Leaflet.LatLngExpression = [this.state.lat, this.state.lng];
     return (
       <div className="multiview-map-component">
         <Map center={position} zoom={this.state.zoom}>
@@ -70,15 +72,19 @@ export class MultiviewMap extends React.Component<Props, State> {
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
         { this.state.geojson && 
-          <GeoJSON data={this.state.geojson}>
+          <GeoJSON
+            data={this.state.geojson}
+            style={this.featureStyle}
+          >
           </GeoJSON>
         }
         </Map>
 
+
       <DebugView.DebugView
       featureId={Number(this.state.featureId)}
       geojsonUrl={String(this.state.geojsonUrl)}
-      handleSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
+      onSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
       </DebugView.DebugView>
       </div>
     );

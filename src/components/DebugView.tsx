@@ -6,16 +6,21 @@ export interface FormData {
 export interface Props {
   featureId: number;
   geojsonUrl: string;
+  onSubmit: (formData: FormData) => void;
+}
+export interface State{
+  featureId: number;
+  geojsonUrl: string;
   handleSubmit: (formData: FormData) => void;
 }
 
-export class DebugView extends React.Component<Props, Props> {
+export class DebugView extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       featureId: props.featureId,
       geojsonUrl: props.geojsonUrl,
-      handleSubmit: props.handleSubmit
+      handleSubmit: props.onSubmit
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -25,24 +30,22 @@ export class DebugView extends React.Component<Props, Props> {
     this.setState({
       featureId: props.featureId,
       geojsonUrl: props.geojsonUrl,
-      handleSubmit: props.handleSubmit
+      handleSubmit: props.onSubmit
     });
   }
 
-
-  handleInputChange(event: any) {
+  handleInputChange(event: any){
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-
     this.setState({
       [name]: value
-    });
+    })
   }
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     this.state.handleSubmit({
-      featureId: this.state.featureId,
+      featureId: Number(this.state.featureId), // Yup, `this.state.featureId` might be a string
       geojsonUrl: this.state.geojsonUrl
     });
     event.preventDefault();
