@@ -1,6 +1,6 @@
 {
   "name": "urban-analytics-multiview-map-component",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Multiview Map Component for Urban Analytics",
   "main": "dist/urban-analytics-multiview-map-component.js",
   "types": "./dist/urban-analytics-multiview-map-component.d.ts",
