@@ -1,12 +1,13 @@
 import * as React from "react";
-import { MapProps, Map, TileLayer, Polygon } from 'react-leaflet';
+import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';
 import * as DebugView from './DebugView';
+import { MultiviewState } from '../MultiviewState';
 
-export interface  MultiviewMapProps {
+export interface  Props {
   context: any;
 }
-export interface  MultiviewMapState {
+export interface  State {
   context: any;
   geojsonUrl: string;
   geojson: any;
@@ -16,8 +17,8 @@ export interface  MultiviewMapState {
   lng: number;
   zoom: number;
 }
-export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMapState> {
-  constructor(props: MultiviewMapProps) {
+export class MultiviewMap extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       context: props.context,
@@ -29,100 +30,56 @@ export class MultiviewMap extends React.Component<MultiviewMapProps, MultiviewMa
       lng: 10,
       zoom: 5.5,
     };
-    console.log('props are', props);
-    console.log('current context is', this.state.context);
   }
   componentDidMount(){
-    console.log('componentDidMount');
-    // Subscribe to featureId events.
-    this.state.context && this.state.context.subscribe(this, this.onChange);
+    this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
   }
-  onChange(context: any, that: MultiviewMap) {
+  handleMultiviewStateChange(context: MultiviewState, that: MultiviewMap) {
+    let state: State = { ...this.state}
+    state.featureId = context.featureId;
+    state.geojsonUrl = context.geojsonUrl;
 
-    // Update the state value for featureId.
-    console.log('update the react map');
     if(context.geojsonUrl != null){
       fetch(context.geojsonUrl, {
         credentials: "same-origin"
       }).then((resp) => resp.json()).then((response) => {
-        that.setState({
-          featureId: context.featureId,
-          geojsonUrl: context.geojsonUrl,
-          geojson: response
-        });
+        state.geojson = response;
       }).catch((err) => {
         console.log(err);
+      }).then(()=>{
+        that.setState(state);
       });
+    } else {
+      that.setState(state);
     }
   }
   handleSubmit(formData: DebugView.FormData){
     this.state.context.featureId = formData.featureId;
     this.state.context.geojsonUrl = formData.geojsonUrl;
   }
-  reverseLongLat(coordinates: any, levels: number){
-    return coordinates.map((subcoordinates: any) =>{
-      if (levels > 1){
-        return this.reverseLongLat(subcoordinates, levels -1);
-      } else {
-        return subcoordinates.reverse();
-      }
-
-    })	
-  }
-  features(){
-    let result = this.state.geojson ? this.state.geojson.features: [];
-    result = result.map((feature: any) => {
-      console.log(feature);
-      let coordinates = feature.geometry.coordinates;
-      switch(feature.geometry.type){
-        case 'Polygon':
-          coordinates = this.reverseLongLat(coordinates, 2);
-          break;
-        case 'MultiPolygon':
-          coordinates = this.reverseLongLat(coordinates, 3);
-          break;
-        default:
-          console.log(feature);
-      }
-      feature.geometry.coordinates = coordinates;
-      return feature;
-    });
-    return result;
-  }
   polygonColor(feature: any){
     return (this.state.featureId == feature.id) ? 'red' : 'blue';
   }
   render() {
     const position: LatLngExpression = [this.state.lat, this.state.lng];
-    console.log('render all');
     return (
       <div className="multiview-map-component">
-      <Map center={position} zoom={this.state.zoom}>
-      <TileLayer
-      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-      />
-      { this.features().map((feature: any, i: number)=> {
-        return (
-          <Polygon
-          key={i}
-          positions={feature.geometry.coordinates}
-          color={this.polygonColor(feature)}>
-          </Polygon >
-        )
-      })
-      }
-      </Map>
-      <div id='feature-id'>
-      <span><strong>Feature Id:</strong> {this.state.featureId}.</span>
-      </div>
-      { this.state.featureId && this.state.geojsonUrl &&
-        <DebugView.DebugView
-        featureId={this.state.featureId}
-        geojsonUrl={this.state.geojsonUrl}
-        handleSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
-        </DebugView.DebugView>
-      }
+        <Map center={position} zoom={this.state.zoom}>
+        <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+        />
+        { this.state.geojson && 
+          <GeoJSON data={this.state.geojson}>
+          </GeoJSON>
+        }
+        </Map>
+
+      <DebugView.DebugView
+      featureId={Number(this.state.featureId)}
+      geojsonUrl={String(this.state.geojsonUrl)}
+      handleSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
+      </DebugView.DebugView>
       </div>
     );
   }

@@ -17,10 +17,18 @@ export class DebugView extends React.Component<Props, Props> {
       geojsonUrl: props.geojsonUrl,
       handleSubmit: props.handleSubmit
     };
-
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+  componentWillReceiveProps(props: Props) {
+    console.log('DebugView.constructor', props);
+    this.setState({
+      featureId: props.featureId,
+      geojsonUrl: props.geojsonUrl,
+      handleSubmit: props.handleSubmit
+    });
+  }
+
 
   handleInputChange(event: any) {
     const target = event.target;
