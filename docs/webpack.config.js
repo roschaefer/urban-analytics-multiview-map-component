@@ -2,7 +2,7 @@ var path = require('path')
 const webpack = require('webpack');
 const PATHS = {
   src: path.join(__dirname, './src'),
-  build: path.join(__dirname, './dist')
+  build: path.join(__dirname, './')
 }
 
 var config = {
