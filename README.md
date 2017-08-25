@@ -47,5 +47,5 @@ __ADDITIONAL USAGE NOTES__
 
 ## License
 
-[ISC](/LICENSE)
+[ISC](/LICENSE.md)
 
