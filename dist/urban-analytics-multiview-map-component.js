@@ -17211,7 +17211,28 @@ var MultiviewState = (function () {
             return this._geojsonUrl;
         },
         set: function (theGeojsonUrl) {
-            this._geojsonUrl = theGeojsonUrl;
+            var _this = this;
+            if (this._geojsonUrl !== theGeojsonUrl) {
+                this._geojsonUrl = theGeojsonUrl;
+                fetch(theGeojsonUrl, {
+                    credentials: "same-origin"
+                }).then(function (resp) { return resp.json(); }).then(function (response) {
+                    _this._geojson = response;
+                    _this.notify();
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MultiviewState.prototype, "geojson", {
+        get: function () {
+            return this._geojson;
+        },
+        set: function (theGeojson) {
+            this._geojson = theGeojson;
             this.notify();
         },
         enumerable: true,
@@ -17265,89 +17286,45 @@ var MultiviewMap = (function (_super) {
             lng: 10,
             zoom: 5.5,
         };
-        console.log('props are', props);
-        console.log('current context is', _this.state.context);
+        _this.featureStyle = _this.featureStyle.bind(_this);
+        _this.onEachFeature = _this.onEachFeature.bind(_this);
         return _this;
     }
     MultiviewMap.prototype.componentDidMount = function () {
-        console.log('componentDidMount');
-        // Subscribe to featureId events.
-        this.state.context && this.state.context.subscribe(this, this.onChange);
+        this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
     };
-    MultiviewMap.prototype.onChange = function (context, that) {
-        // Update the state value for featureId.
-        console.log('update the react map');
-        if (context.geojsonUrl != null) {
-            fetch(context.geojsonUrl, {
-                credentials: "same-origin"
-            }).then(function (resp) { return resp.json(); }).then(function (response) {
-                that.setState({
-                    featureId: context.featureId,
-                    geojsonUrl: context.geojsonUrl,
-                    geojson: response
-                });
-            }).catch(function (err) {
-                console.log(err);
-            });
-        }
+    MultiviewMap.prototype.handleMultiviewStateChange = function (context, that) {
+        that.setState({
+            featureId: context.featureId,
+            geojsonUrl: context.geojsonUrl,
+            geojson: context.geojson,
+        });
     };
     MultiviewMap.prototype.handleSubmit = function (formData) {
         this.state.context.featureId = formData.featureId;
         this.state.context.geojsonUrl = formData.geojsonUrl;
     };
-    MultiviewMap.prototype.reverseLongLat = function (coordinates, levels) {
+    MultiviewMap.prototype.featureStyle = function (feature) {
+        var color = (feature.id === this.state.featureId) ? 'red' : 'blue';
+        return { color: color };
+    };
+    MultiviewMap.prototype.onEachFeature = function (feature, layer) {
         var _this = this;
-        return coordinates.map(function (subcoordinates) {
-            if (levels > 1) {
-                return _this.reverseLongLat(subcoordinates, levels - 1);
-            }
-            else {
-                return subcoordinates.reverse();
+        layer.on({
+            click: function () {
+                _this.state.context.featureId = feature.id;
             }
         });
-    };
-    MultiviewMap.prototype.features = function () {
-        var _this = this;
-        var result = this.state.geojson ? this.state.geojson.features : [];
-        result = result.map(function (feature) {
-            console.log(feature);
-            var coordinates = feature.geometry.coordinates;
-            switch (feature.geometry.type) {
-                case 'Polygon':
-                    coordinates = _this.reverseLongLat(coordinates, 2);
-                    break;
-                case 'MultiPolygon':
-                    coordinates = _this.reverseLongLat(coordinates, 3);
-                    break;
-                default:
-                    console.log(feature);
-            }
-            feature.geometry.coordinates = coordinates;
-            return feature;
-        });
-        return result;
-    };
-    MultiviewMap.prototype.polygonColor = function (feature) {
-        return (this.state.featureId == feature.id) ? 'red' : 'blue';
     };
     MultiviewMap.prototype.render = function () {
         var _this = this;
         var position = [this.state.lat, this.state.lng];
-        console.log('render all');
         return (React.createElement("div", { className: "multiview-map-component" },
             React.createElement(react_leaflet_1.Map, { center: position, zoom: this.state.zoom },
                 React.createElement(react_leaflet_1.TileLayer, { attribution: "\u00A9 <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors", url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' }),
-                this.features().map(function (feature, i) {
-                    return (React.createElement(react_leaflet_1.Polygon, { key: i, positions: feature.geometry.coordinates, color: _this.polygonColor(feature) }));
-                })),
-            React.createElement("div", { id: 'feature-id' },
-                React.createElement("span", null,
-                    React.createElement("strong", null, "Feature Id:"),
-                    " ",
-                    this.state.featureId,
-                    ".")),
-            this.state.featureId && this.state.geojsonUrl &&
-                React.createElement(DebugView.DebugView, { featureId: this.state.featureId, geojsonUrl: this.state.geojsonUrl, handleSubmit: function (formData) { return _this.handleSubmit(formData); } })));
+                this.state.geojson && this.state.geojsonUrl &&
+                    React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, onEachFeature: this.onEachFeature })),
+            React.createElement(DebugView.DebugView, { featureId: Number(this.state.featureId), geojsonUrl: String(this.state.geojsonUrl), onSubmit: function (formData) { return _this.handleSubmit(formData); } })));
     };
     return MultiviewMap;
 }(React.Component));
@@ -24183,12 +24160,20 @@ var DebugView = (function (_super) {
         _this.state = {
             featureId: props.featureId,
             geojsonUrl: props.geojsonUrl,
-            handleSubmit: props.handleSubmit
+            handleSubmit: props.onSubmit
         };
         _this.handleInputChange = _this.handleInputChange.bind(_this);
         _this.handleSubmit = _this.handleSubmit.bind(_this);
         return _this;
     }
+    DebugView.prototype.componentWillReceiveProps = function (props) {
+        console.log('DebugView.constructor', props);
+        this.setState({
+            featureId: props.featureId,
+            geojsonUrl: props.geojsonUrl,
+            handleSubmit: props.onSubmit
+        });
+    };
     DebugView.prototype.handleInputChange = function (event) {
         var target = event.target;
         var value = target.type === 'checkbox' ? target.checked : target.value;
@@ -24200,7 +24185,7 @@ var DebugView = (function (_super) {
     };
     DebugView.prototype.handleSubmit = function (event) {
         this.state.handleSubmit({
-            featureId: this.state.featureId,
+            featureId: Number(this.state.featureId),
             geojsonUrl: this.state.geojsonUrl
         });
         event.preventDefault();
