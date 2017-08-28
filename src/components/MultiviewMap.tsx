@@ -36,23 +36,11 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
   }
   handleMultiviewStateChange(context: MultiviewState, that: MultiviewMap) {
-    let state: State = { ...this.state}
-    state.featureId = context.featureId;
-    state.geojsonUrl = context.geojsonUrl;
-
-    if(context.geojsonUrl != null){
-      fetch(context.geojsonUrl, {
-        credentials: "same-origin"
-      }).then((resp) => resp.json()).then((response) => {
-        state.geojson = response;
-      }).catch((err) => {
-        console.log(err);
-      }).then(()=>{
-        that.setState(state);
-      });
-    } else {
-      that.setState(state);
-    }
+    that.setState({
+      featureId: context.featureId,
+      geojsonUrl: context.geojsonUrl,
+      geojson: context.geojson,
+    });
   }
   handleSubmit(formData: DebugView.FormData){
     this.state.context.featureId = formData.featureId;
@@ -71,8 +59,9 @@ export class MultiviewMap extends React.Component<Props, State> {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
-        { this.state.geojson && 
+        { this.state.geojson &&  this.state.geojsonUrl &&
           <GeoJSON
+            key={this.state.geojsonUrl}
             data={this.state.geojson}
             style={this.featureStyle}
           >

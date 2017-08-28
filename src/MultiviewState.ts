@@ -2,6 +2,7 @@ export class MultiviewState {
   subscribers: any[];
   private _featureId: number;
   private _geojsonUrl: string;
+  private _geojson: any;
 
   constructor() {
     this.subscribers = [];
@@ -17,9 +18,21 @@ export class MultiviewState {
   get geojsonUrl(): string {
     return this._geojsonUrl;
   }
+  get geojson():any {
+    return this._geojson;
+  }
   set geojsonUrl(theGeojsonUrl: string) {
-    this._geojsonUrl = theGeojsonUrl;
-    this.notify();
+    if(this._geojsonUrl !== theGeojsonUrl){
+      this._geojsonUrl = theGeojsonUrl;
+      fetch(theGeojsonUrl, {
+        credentials: "same-origin"
+      }).then((resp) => resp.json()).then((response) => {
+        this._geojson = response;
+        this.notify();
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
   }
 
   subscribe(parent: any, callback: () => void) {
