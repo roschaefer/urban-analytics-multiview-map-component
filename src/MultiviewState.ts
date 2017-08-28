@@ -39,7 +39,7 @@ export class MultiviewState {
     this.notify();
   }
 
-  subscribe(parent: any, callback: () => void) {
+  subscribe(parent: any, callback: (multiviewState: MultiviewState, parent: any) => void) {
     this.subscribers.push({ parent: parent, callback: callback });
   }
 
