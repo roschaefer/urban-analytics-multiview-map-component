@@ -18,9 +18,6 @@ export class MultiviewState {
   get geojsonUrl(): string {
     return this._geojsonUrl;
   }
-  get geojson():any {
-    return this._geojson;
-  }
   set geojsonUrl(theGeojsonUrl: string) {
     if(this._geojsonUrl !== theGeojsonUrl){
       this._geojsonUrl = theGeojsonUrl;
@@ -33,6 +30,13 @@ export class MultiviewState {
         console.log(err);
       })
     }
+  }
+  get geojson():any {
+    return this._geojson;
+  }
+  set geojson(theGeojson:any) {
+    this._geojson = theGeojson;
+    this.notify();
   }
 
   subscribe(parent: any, callback: () => void) {

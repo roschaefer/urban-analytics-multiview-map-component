@@ -31,6 +31,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       zoom: 5.5,
     };
     this.featureStyle = this.featureStyle.bind(this);
+    this.onEachFeature = this.onEachFeature.bind(this);
   }
   componentDidMount(){
     this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
@@ -50,6 +51,13 @@ export class MultiviewMap extends React.Component<Props, State> {
     const color = (feature.id === this.state.featureId) ? 'red' : 'blue';
     return { color };
   }
+  onEachFeature(feature:any, layer:any){
+    layer.on({
+      click: () => {
+        this.state.context.featureId = feature.id;
+      }
+    })
+  }
   render() {
     const position: Leaflet.LatLngExpression = [this.state.lat, this.state.lng];
     return (
@@ -64,17 +72,17 @@ export class MultiviewMap extends React.Component<Props, State> {
             key={this.state.geojsonUrl}
             data={this.state.geojson}
             style={this.featureStyle}
+            onEachFeature={this.onEachFeature}
           >
           </GeoJSON>
         }
         </Map>
 
-
-      <DebugView.DebugView
-      featureId={Number(this.state.featureId)}
-      geojsonUrl={String(this.state.geojsonUrl)}
-      onSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
-      </DebugView.DebugView>
+        <DebugView.DebugView
+        featureId={Number(this.state.featureId)}
+        geojsonUrl={String(this.state.geojsonUrl)}
+        onSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
+        </DebugView.DebugView>
       </div>
     );
   }
