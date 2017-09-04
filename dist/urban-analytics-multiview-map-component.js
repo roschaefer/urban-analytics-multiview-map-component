@@ -17284,6 +17284,7 @@ var MultiviewMap = (function (_super) {
             lat: props.lat || 51.3,
             lng: props.lng || 10,
             zoom: props.zoom || 5.5,
+            events: props.events || ['click', 'mouseover']
         };
         _this.featureStyle = _this.featureStyle.bind(_this);
         _this.onEachFeature = _this.onEachFeature.bind(_this);
@@ -17309,14 +17310,13 @@ var MultiviewMap = (function (_super) {
     };
     MultiviewMap.prototype.onEachFeature = function (feature, layer) {
         var _this = this;
-        layer.on({
-            click: function () {
+        var eventsCallbacks = this.state.events.reduce(function (result, event) {
+            result[event] = function () {
                 _this.state.context.featureId = feature.id;
-            },
-            mouseover: function () {
-                _this.state.context.featureId = feature.id;
-            }
-        });
+            };
+            return result;
+        }, {});
+        layer.on(eventsCallbacks);
     };
     MultiviewMap.prototype.render = function () {
         var _this = this;

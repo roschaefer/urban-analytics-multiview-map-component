@@ -42,16 +42,17 @@ export namespace MultiviewMap {
     lat: number;
     lng: number;
     zoom: number;
+    events: string[];
   }
   export interface State {
     context: any;
     geojsonUrl: string;
     geojson: any;
-    color: string;
     featureId: number;
     lat: number;
     lng: number;
     zoom: number;
+    events: string[];
   }
 }
 export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {

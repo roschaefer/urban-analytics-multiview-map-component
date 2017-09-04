@@ -9,6 +9,7 @@ export interface  Props {
   lat: number;
   lng: number;
   zoom: number;
+  events: string [];
 }
 export interface  State {
   context: any;
@@ -18,6 +19,7 @@ export interface  State {
   lat: number;
   lng: number;
   zoom: number;
+  events: string [];
 }
 export class MultiviewMap extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -30,6 +32,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       lat: props.lat || 51.3,
       lng: props.lng || 10,
       zoom: props.zoom || 5.5,
+      events: props.events || ['click', 'mouseover']
     };
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
@@ -53,14 +56,13 @@ export class MultiviewMap extends React.Component<Props, State> {
     return { color };
   }
   onEachFeature(feature:any, layer:any){
-    layer.on({
-      click: () => {
-        this.state.context.featureId = feature.id;
-      },
-      mouseover: () => {
-        this.state.context.featureId = feature.id;
+    let eventsCallbacks = this.state.events.reduce((result: any, event: string) => {
+      result[event] = () => {
+        this.state.context.featureId = feature.id
       }
-    })
+      return result;
+    }, {})
+    layer.on(eventsCallbacks);
   }
   render() {
     const position: Leaflet.LatLngExpression = [this.state.lat, this.state.lng];

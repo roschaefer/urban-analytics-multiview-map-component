@@ -6,7 +6,7 @@ let multiviewState = new MultiviewState();
 
 
 ReactDOM.render(
-  <MultiviewMap context={multiviewState} lat={null} lng={null} zoom={5}/>,
+  <MultiviewMap context={multiviewState} lat={null} lng={null} zoom={5} events={['click']}/>,
   document.getElementById('multiview-map-component')
 );
 
