@@ -5,14 +5,6 @@
   "main": "dist/urban-analytics-multiview-map-component.js",
   "types": "./dist/urban-analytics-multiview-map-component.d.ts",
   "author": "Robert Schäfer",
-  "homepage": "https://github.com/roschaefer/urban-analytics-multiview-map-component",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/roschaefer/urban-analytics-multiview-map-component.git"
-  },
-  "bugs": {
-    "url": "https://github.com/roschaefer/urban-analytics-multiview-map-component/issues"
-  },
   "license": "ISC",
   "scripts": {
     "clean": "rm -rf dist/*",
