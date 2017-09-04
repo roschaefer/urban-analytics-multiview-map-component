@@ -55,6 +55,9 @@ export class MultiviewMap extends React.Component<Props, State> {
     layer.on({
       click: () => {
         this.state.context.featureId = feature.id;
+      },
+      mouseover: () => {
+        this.state.context.featureId = feature.id;
       }
     })
   }
