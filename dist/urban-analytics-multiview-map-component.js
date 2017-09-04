@@ -17313,6 +17313,9 @@ var MultiviewMap = (function (_super) {
         layer.on({
             click: function () {
                 _this.state.context.featureId = feature.id;
+            },
+            mouseover: function () {
+                _this.state.context.featureId = feature.id;
             }
         });
     };
