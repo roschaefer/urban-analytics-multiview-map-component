@@ -1,12 +1,12 @@
 /// <reference types="react" />
 import * as React from "react";
 import * as Leaflet from "leaflet";
-export declare class DebugView extends React.Component<Props, State> {
-    constructor(props: Props);
-    componentWillReceiveProps(props: Props): void;
-    handleInputChange(event: any): void;
-    handleSubmit(event: React.FormEvent<HTMLFormElement>): void;
-    render(): JSX.Element;
+export declare class DebugView extends React.Component<DebugView.Props, DebugView.State> {
+  constructor(props: DebugView.Props);
+  componentWillReceiveProps(props: DebugView.Props): void;
+  handleInputChange(event: any): void;
+  handleSubmit(event: React.FormEvent<HTMLFormElement>): void;
+  render(): JSX.Element;
 }
 export namespace DebugView {
   export interface FormData {
@@ -25,18 +25,18 @@ export namespace DebugView {
   }
 }
 export declare class MultiviewState {
-    subscribers: any[];
-    private _featureId;
-    private _geojsonUrl;
-    private _geojson;
-    constructor();
-    featureId: number;
-    geojsonUrl: string;
-    geojson: any;
-    subscribe(parent: any, callback: (multiviewState: MultiviewState, parent: any) => void): void;
-    notify(): void;
+  subscribers: any[];
+  private _featureId;
+  private _geojsonUrl;
+  private _geojson;
+  constructor();
+  featureId: number;
+  geojsonUrl: string;
+  geojson: any;
+  subscribe(parent: any, callback: (multiviewState: MultiviewState, parent: any) => void): void;
+  notify(): void;
 }
-namespace MultiviewMap {
+export namespace MultiviewMap {
   export interface Props {
     context: any;
   }
@@ -51,13 +51,13 @@ namespace MultiviewMap {
     zoom: number;
   }
 }
-export declare class MultiviewMap extends React.Component<Props, State> {
-    constructor(props: Props);
-    componentDidMount(): void;
-    handleMultiviewStateChange(context: MultiviewState, that: MultiviewMap): void;
-    handleSubmit(formData: DebugView.FormData): void;
-    featureStyle(feature: any): Leaflet.PathOptions;
-    onEachFeature(feature: any, layer: any): void;
-    render(): JSX.Element;
+export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {
+  constructor(props: MultiviewMap.Props);
+  componentDidMount(): void;
+  handleMultiviewStateChange(context: MultiviewState, that: MultiviewMap): void;
+  handleSubmit(formData: DebugView.FormData): void;
+  featureStyle(feature: any): Leaflet.PathOptions;
+  onEachFeature(feature: any, layer: any): void;
+  render(): JSX.Element;
 }
 export default MultiviewMap;
