@@ -44,20 +44,20 @@ const aGeojson:any = {
 describe("MultiviewMap", function() {
   it("renders", () => {
     const multiviewState = new MultiviewState();
-    const wrapper = mount(<MultiviewMap context={multiviewState}/>);
+    const wrapper = mount(<MultiviewMap context={multiviewState} lng={null} lat={null} zoom={null}/>);
     expect(wrapper.find('.multiview-map-component')).to.have.length(1);
   });
 
   it("renders .leaflet-container", () => {
     const multiviewState = new MultiviewState();
-    const wrapper = mount(<MultiviewMap context={multiviewState}/>);
+    const wrapper = mount(<MultiviewMap context={multiviewState} lng={null} lat={null} zoom={null}/>);
     expect(wrapper.find('.leaflet-container')).to.have.length(1);
   });
 
   describe('handleMultiviewStateChange', () => {
     it('rerenders DebugView', () => {
     const multiviewState = new MultiviewState();
-    const wrapper = mount(<MultiviewMap context={multiviewState}/>);
+    const wrapper = mount(<MultiviewMap context={multiviewState} lng={null} lat={null} zoom={null}/>);
     multiviewState.featureId = 43;
     expect(wrapper.find('input[name="featureId"]').first().props().value).to.eq(43);
     })
@@ -67,7 +67,7 @@ describe("MultiviewMap", function() {
     describe('click on feature', () => {
       it('updates featureId', ()=>{
         const multiviewState = new MultiviewState();
-        const wrapper = mount(<MultiviewMap context={multiviewState}/>);
+        const wrapper = mount(<MultiviewMap context={multiviewState} lng={null} lat={null} zoom={null}/>);
         multiviewState.geojson = aGeojson;
       });
     })

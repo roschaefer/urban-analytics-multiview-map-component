@@ -39,6 +39,9 @@ export declare class MultiviewState {
 export namespace MultiviewMap {
   export interface Props {
     context: any;
+    lat: number;
+    lng: number;
+    zoom: number;
   }
   export interface State {
     context: any;

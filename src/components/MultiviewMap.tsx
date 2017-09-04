@@ -6,12 +6,14 @@ import { MultiviewState } from '../MultiviewState';
 
 export interface  Props {
   context: any;
+  lat: number;
+  lng: number;
+  zoom: number;
 }
 export interface  State {
   context: any;
   geojsonUrl: string;
   geojson: any;
-  color: string;
   featureId: number;
   lat: number;
   lng: number;
@@ -24,11 +26,10 @@ export class MultiviewMap extends React.Component<Props, State> {
       context: props.context,
       geojsonUrl: null,
       geojson: null,
-      color: 'red',
       featureId: null,
-      lat: 51.3,
-      lng: 10,
-      zoom: 5.5,
+      lat: props.lat || 51.3,
+      lng: props.lng || 10,
+      zoom: props.zoom || 5.5,
     };
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);

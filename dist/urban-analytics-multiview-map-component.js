@@ -17280,11 +17280,10 @@ var MultiviewMap = (function (_super) {
             context: props.context,
             geojsonUrl: null,
             geojson: null,
-            color: 'red',
             featureId: null,
-            lat: 51.3,
-            lng: 10,
-            zoom: 5.5,
+            lat: props.lat || 51.3,
+            lng: props.lng || 10,
+            zoom: props.zoom || 5.5,
         };
         _this.featureStyle = _this.featureStyle.bind(_this);
         _this.onEachFeature = _this.onEachFeature.bind(_this);
