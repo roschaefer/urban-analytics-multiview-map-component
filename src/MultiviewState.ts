@@ -3,6 +3,7 @@ export class MultiviewState {
   private _featureId: number;
   private _geojsonUrl: string;
   private _geojson: any;
+  private _focusId: number;
 
   constructor() {
     this.subscribers = [];
@@ -13,6 +14,13 @@ export class MultiviewState {
   }
   set featureId(theFeatureId: number) {
     this._featureId = theFeatureId;
+    this.notify();
+  }
+  get focusId(): number {
+    return this._focusId ;
+  }
+  set focusId(theFocusId: number) {
+    this._focusId =theFocusId;
     this.notify();
   }
   get geojsonUrl(): string {

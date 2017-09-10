@@ -6,18 +6,18 @@ import { MultiviewState } from '../MultiviewState';
 
 export interface  Props {
   context: any;
-  lat: number;
-  lng: number;
-  zoom: number;
-  events: string [];
+  lat?: number;
+  lng?: number;
+  zoom?: number;
+  events?: string [];
 }
 export interface  State {
   context: any;
   geojsonUrl: string;
   geojson: any;
   featureId: number;
-  lat: number;
-  lng: number;
+  focusId: number;
+  position: Leaflet.LatLngExpression;
   zoom: number;
   events: string [];
 }
@@ -29,8 +29,8 @@ export class MultiviewMap extends React.Component<Props, State> {
       geojsonUrl: null,
       geojson: null,
       featureId: null,
-      lat: props.lat || 51.3,
-      lng: props.lng || 10,
+      focusId: null,
+      position: [51.3, 10],
       zoom: props.zoom || 5.5,
       events: props.events || ['click', 'mouseover']
     };
@@ -45,35 +45,48 @@ export class MultiviewMap extends React.Component<Props, State> {
       featureId: context.featureId,
       geojsonUrl: context.geojsonUrl,
       geojson: context.geojson,
+      focusId: context.focusId,
     });
   }
   handleSubmit(formData: DebugView.FormData){
     this.state.context.featureId = formData.featureId;
     this.state.context.geojsonUrl = formData.geojsonUrl;
+    this.state.context.focusId= formData.focusId;
   }
   featureStyle(feature: any): Leaflet.PathOptions{
     const color = (feature.id === this.state.featureId) ? 'red' : 'blue';
     return { color };
   }
   onEachFeature(feature:any, layer:any){
-    let eventsCallbacks = this.state.events.reduce((result: any, event: string) => {
-      result[event] = () => {
-        this.state.context.featureId = feature.id
+    layer.on({
+      mouseover: () => {
+        this.state.context.featureId = feature.id;
+      },
+      click: () => {
+        let polygon: Leaflet.Polygon = new Leaflet.Polygon(feature.geometry.coordinates);
+        const center: Leaflet.LatLng = polygon.getBounds().getCenter();
+        const reversedPosition = {
+          lat: center.lng,
+          lng: center.lat
+        }
+        this.setState({
+          position: reversedPosition
+        });
+        // yes, lat/lng is reversed (GeoJSON spec)
+        this.state.context.featureId = feature.id;
+        this.state.context.focusId   = feature.id;
       }
-      return result;
-    }, {})
-    layer.on(eventsCallbacks);
+    });
   }
   render() {
-    const position: Leaflet.LatLngExpression = [this.state.lat, this.state.lng];
     return (
       <div className="multiview-map-component">
-        <Map center={position} zoom={this.state.zoom}>
+        <Map center={this.state.position} zoom={this.state.zoom}>
         <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
-        { this.state.geojson &&  this.state.geojsonUrl &&
+        { this.state.geojson &&
           <GeoJSON
             key={this.state.geojsonUrl}
             data={this.state.geojson}
@@ -86,6 +99,7 @@ export class MultiviewMap extends React.Component<Props, State> {
 
         <DebugView.DebugView
         featureId={Number(this.state.featureId)}
+        focusId={this.state.focusId}
         geojsonUrl={String(this.state.geojsonUrl)}
         onSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
         </DebugView.DebugView>

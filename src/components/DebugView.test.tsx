@@ -9,6 +9,7 @@ describe('DebugView', () => {
     it('filled out featureId', () => {
       const wrapper = shallow(<DebugView.DebugView
         featureId={42}
+        focusId={null}
         geojsonUrl={null}
         onSubmit={(formData: DebugView.FormData) => {}}
         />);
@@ -18,6 +19,7 @@ describe('DebugView', () => {
     it('filled out geojsonUrl', () => {
       const wrapper = shallow(<DebugView.DebugView
         featureId={null}
+        focusId={null}
         geojsonUrl={'berlin.geojson'}
         onSubmit={(formData: DebugView.FormData) => {}}
         />);
@@ -29,6 +31,7 @@ describe('DebugView', () => {
         const onSubmit = sinon.spy();
         const wrapper = mount(<DebugView.DebugView
           featureId={4711}
+          focusId={null}
           geojsonUrl={'bundeslaender.geojson'}
           onSubmit={onSubmit}
           />);
@@ -40,6 +43,7 @@ describe('DebugView', () => {
         const onSubmit = sinon.spy();
         const wrapper = mount(<DebugView.DebugView
           featureId={4711}
+          focusId={null}
           geojsonUrl={'bundeslaender.geojson'}
           onSubmit={onSubmit}
           />);
