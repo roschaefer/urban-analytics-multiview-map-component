@@ -9,7 +9,6 @@ export interface  Props {
   lat?: number;
   lng?: number;
   zoom?: number;
-  events?: string [];
 }
 export interface  State {
   context: any;
@@ -19,7 +18,6 @@ export interface  State {
   featureList: any [];
   focusId: number;
   zoom: number;
-  events: string [];
 }
 export class MultiviewMap extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -32,7 +30,6 @@ export class MultiviewMap extends React.Component<Props, State> {
       featureList: [],
       focusId: null,
       zoom: props.zoom || 5.5,
-      events: props.events || ['click', 'mouseover']
     };
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
@@ -64,9 +61,8 @@ export class MultiviewMap extends React.Component<Props, State> {
         this.state.context.featureId = feature.id;
       },
       click: () => {
-        // yes, lat/lng is reversed (GeoJSON spec)
+        this.state.context.focusId = feature.id;
         this.state.context.featureId = feature.id;
-        this.state.context.focusId   = feature.id;
       }
     });
   }

@@ -29,8 +29,10 @@ export declare class MultiviewState {
   private _featureId;
   private _geojsonUrl;
   private _geojson;
+  private _focusId;
   constructor();
   featureId: number;
+  focusId: number;
   geojsonUrl: string;
   geojson: any;
   subscribe(parent: any, callback: (multiviewState: MultiviewState, parent: any) => void): void;
@@ -39,20 +41,18 @@ export declare class MultiviewState {
 export namespace MultiviewMap {
   export interface Props {
     context: any;
-    lat: number;
-    lng: number;
-    zoom: number;
-    events: string[];
+    lat?: number;
+    lng?: number;
+    zoom?: number;
   }
   export interface State {
     context: any;
     geojsonUrl: string;
     geojson: any;
     featureId: number;
-    lat: number;
-    lng: number;
+    featureList: any[];
+    focusId: number;
     zoom: number;
-    events: string[];
   }
 }
 export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {
@@ -62,6 +62,7 @@ export declare class MultiviewMap extends React.Component<MultiviewMap.Props, Mu
   handleSubmit(formData: DebugView.FormData): void;
   featureStyle(feature: any): Leaflet.PathOptions;
   onEachFeature(feature: any, layer: any): void;
+  position(): Leaflet.LatLngExpression;
   render(): JSX.Element;
 }
 export default MultiviewMap;
