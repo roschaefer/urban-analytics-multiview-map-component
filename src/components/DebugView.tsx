@@ -49,8 +49,8 @@ export class DebugView extends React.Component<Props, State> {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     this.state.handleSubmit({
-      featureId: Number(this.state.featureId), // Yup, `this.state.featureId` might be a string
-      focusId: Number(this.state.focusId),
+      featureId: Number(this.state.featureId) || null, // Yup, `this.state.featureId` might be a string
+      focusId: Number(this.state.focusId) || null,
       geojsonUrl: this.state.geojsonUrl
     });
     event.preventDefault();

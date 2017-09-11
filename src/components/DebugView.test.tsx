@@ -9,7 +9,7 @@ describe('DebugView', () => {
     it('filled out featureId', () => {
       const wrapper = shallow(<DebugView.DebugView
         featureId={42}
-        focusId={null}
+        focusId={undefined}
         geojsonUrl={null}
         onSubmit={(formData: DebugView.FormData) => {}}
         />);
@@ -19,7 +19,7 @@ describe('DebugView', () => {
     it('filled out geojsonUrl', () => {
       const wrapper = shallow(<DebugView.DebugView
         featureId={null}
-        focusId={null}
+        focusId={undefined}
         geojsonUrl={'berlin.geojson'}
         onSubmit={(formData: DebugView.FormData) => {}}
         />);
@@ -31,7 +31,7 @@ describe('DebugView', () => {
         const onSubmit = sinon.spy();
         const wrapper = mount(<DebugView.DebugView
           featureId={4711}
-          focusId={null}
+          focusId={undefined}
           geojsonUrl={'bundeslaender.geojson'}
           onSubmit={onSubmit}
           />);
@@ -43,7 +43,7 @@ describe('DebugView', () => {
         const onSubmit = sinon.spy();
         const wrapper = mount(<DebugView.DebugView
           featureId={4711}
-          focusId={null}
+          focusId={undefined}
           geojsonUrl={'bundeslaender.geojson'}
           onSubmit={onSubmit}
           />);
@@ -56,6 +56,7 @@ describe('DebugView', () => {
         wrapper.find('input[type="submit"]').first().simulate('submit');
         sinon.assert.calledWith(onSubmit, {
           featureId: 123,
+          focusId: null,
           geojsonUrl: 'bundeslaender.geojson'
         })
       })

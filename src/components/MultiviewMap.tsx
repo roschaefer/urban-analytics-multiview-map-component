@@ -16,8 +16,8 @@ export interface  State {
   geojsonUrl: string;
   geojson: any;
   featureId: number;
+  featureList: any [];
   focusId: number;
-  position: Leaflet.LatLngExpression;
   zoom: number;
   events: string [];
 }
@@ -29,8 +29,8 @@ export class MultiviewMap extends React.Component<Props, State> {
       geojsonUrl: null,
       geojson: null,
       featureId: null,
+      featureList: [],
       focusId: null,
-      position: [51.3, 10],
       zoom: props.zoom || 5.5,
       events: props.events || ['click', 'mouseover']
     };
@@ -58,30 +58,38 @@ export class MultiviewMap extends React.Component<Props, State> {
     return { color };
   }
   onEachFeature(feature:any, layer:any){
+    this.state.featureList.push(feature);
     layer.on({
       mouseover: () => {
         this.state.context.featureId = feature.id;
       },
       click: () => {
-        let polygon: Leaflet.Polygon = new Leaflet.Polygon(feature.geometry.coordinates);
-        const center: Leaflet.LatLng = polygon.getBounds().getCenter();
-        const reversedPosition = {
-          lat: center.lng,
-          lng: center.lat
-        }
-        this.setState({
-          position: reversedPosition
-        });
         // yes, lat/lng is reversed (GeoJSON spec)
         this.state.context.featureId = feature.id;
         this.state.context.focusId   = feature.id;
       }
     });
   }
+  position(): Leaflet.LatLngExpression {
+    const focusedFeature = this.state.featureList.find((feature) => { return feature.id === this.state.focusId });
+    if (focusedFeature) {
+      let polygon: Leaflet.Polygon = new Leaflet.Polygon(focusedFeature.geometry.coordinates);
+      const center: Leaflet.LatLng = polygon.getBounds().getCenter();
+      return {
+        lat: center.lng,
+        lng: center.lat
+      }
+    } else {
+      return {
+        lat: 51.3,
+        lng: 10
+      }
+    }
+  }
   render() {
     return (
       <div className="multiview-map-component">
-        <Map center={this.state.position} zoom={this.state.zoom}>
+        <Map center={this.position()} zoom={this.state.zoom}>
         <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
