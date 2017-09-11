@@ -2,7 +2,7 @@ import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
 import * as DebugView from './DebugView';
-import { MultiviewState } from '../MultiviewState';
+import { MultiviewBroadcaster } from '../MultiviewBroadcaster';
 
 export interface  Props {
   context: any;
@@ -35,9 +35,9 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.onEachFeature = this.onEachFeature.bind(this);
   }
   componentDidMount(){
-    this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
+    this.state.context && this.state.context.subscribe(this, this.handleMultiviewBroadcasterChange);
   }
-  handleMultiviewStateChange(context: MultiviewState, that: MultiviewMap) {
+  handleMultiviewBroadcasterChange(context: MultiviewBroadcaster, that: MultiviewMap) {
     that.setState({
       featureId: context.featureId,
       geojsonUrl: context.geojsonUrl,

@@ -17191,11 +17191,11 @@ __export(__webpack_require__(93));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var MultiviewState = (function () {
-    function MultiviewState() {
+var MultiviewBroadcaster = (function () {
+    function MultiviewBroadcaster() {
         this.subscribers = [];
     }
-    Object.defineProperty(MultiviewState.prototype, "featureId", {
+    Object.defineProperty(MultiviewBroadcaster.prototype, "featureId", {
         get: function () {
             return this._featureId;
         },
@@ -17206,7 +17206,18 @@ var MultiviewState = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(MultiviewState.prototype, "geojsonUrl", {
+    Object.defineProperty(MultiviewBroadcaster.prototype, "focusId", {
+        get: function () {
+            return this._focusId;
+        },
+        set: function (theFocusId) {
+            this._focusId = theFocusId;
+            this.notify();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MultiviewBroadcaster.prototype, "geojsonUrl", {
         get: function () {
             return this._geojsonUrl;
         },
@@ -17227,7 +17238,7 @@ var MultiviewState = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(MultiviewState.prototype, "geojson", {
+    Object.defineProperty(MultiviewBroadcaster.prototype, "geojson", {
         get: function () {
             return this._geojson;
         },
@@ -17238,18 +17249,18 @@ var MultiviewState = (function () {
         enumerable: true,
         configurable: true
     });
-    MultiviewState.prototype.subscribe = function (parent, callback) {
+    MultiviewBroadcaster.prototype.subscribe = function (parent, callback) {
         this.subscribers.push({ parent: parent, callback: callback });
     };
-    MultiviewState.prototype.notify = function () {
+    MultiviewBroadcaster.prototype.notify = function () {
         var _this = this;
         this.subscribers.forEach(function (subscriber) {
             subscriber.callback(_this, subscriber.parent);
         });
     };
-    return MultiviewState;
+    return MultiviewBroadcaster;
 }());
-exports.MultiviewState = MultiviewState;
+exports.MultiviewBroadcaster = MultiviewBroadcaster;
 
 
 /***/ }),
@@ -17271,6 +17282,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(4);
 var react_leaflet_1 = __webpack_require__(94);
+var Leaflet = __webpack_require__(1);
 var DebugView = __webpack_require__(235);
 var MultiviewMap = (function (_super) {
     __extends(MultiviewMap, _super);
@@ -17281,28 +17293,29 @@ var MultiviewMap = (function (_super) {
             geojsonUrl: null,
             geojson: null,
             featureId: null,
-            lat: props.lat || 51.3,
-            lng: props.lng || 10,
+            featureList: [],
+            focusId: null,
             zoom: props.zoom || 5.5,
-            events: props.events || ['click', 'mouseover']
         };
         _this.featureStyle = _this.featureStyle.bind(_this);
         _this.onEachFeature = _this.onEachFeature.bind(_this);
         return _this;
     }
     MultiviewMap.prototype.componentDidMount = function () {
-        this.state.context && this.state.context.subscribe(this, this.handleMultiviewStateChange);
+        this.state.context && this.state.context.subscribe(this, this.handleMultiviewBroadcasterChange);
     };
-    MultiviewMap.prototype.handleMultiviewStateChange = function (context, that) {
+    MultiviewMap.prototype.handleMultiviewBroadcasterChange = function (context, that) {
         that.setState({
             featureId: context.featureId,
             geojsonUrl: context.geojsonUrl,
             geojson: context.geojson,
+            focusId: context.focusId,
         });
     };
     MultiviewMap.prototype.handleSubmit = function (formData) {
         this.state.context.featureId = formData.featureId;
         this.state.context.geojsonUrl = formData.geojsonUrl;
+        this.state.context.focusId = formData.focusId;
     };
     MultiviewMap.prototype.featureStyle = function (feature) {
         var color = (feature.id === this.state.featureId) ? 'red' : 'blue';
@@ -17310,23 +17323,43 @@ var MultiviewMap = (function (_super) {
     };
     MultiviewMap.prototype.onEachFeature = function (feature, layer) {
         var _this = this;
-        var eventsCallbacks = this.state.events.reduce(function (result, event) {
-            result[event] = function () {
+        this.state.featureList.push(feature);
+        layer.on({
+            mouseover: function () {
                 _this.state.context.featureId = feature.id;
+            },
+            click: function () {
+                _this.state.context.focusId = feature.id;
+                _this.state.context.featureId = feature.id;
+            }
+        });
+    };
+    MultiviewMap.prototype.position = function () {
+        var _this = this;
+        var focusedFeature = this.state.featureList.find(function (feature) { return feature.id === _this.state.focusId; });
+        if (focusedFeature) {
+            var polygon = new Leaflet.Polygon(focusedFeature.geometry.coordinates);
+            var center = polygon.getBounds().getCenter();
+            return {
+                lat: center.lng,
+                lng: center.lat
             };
-            return result;
-        }, {});
-        layer.on(eventsCallbacks);
+        }
+        else {
+            return {
+                lat: 51.3,
+                lng: 10
+            };
+        }
     };
     MultiviewMap.prototype.render = function () {
         var _this = this;
-        var position = [this.state.lat, this.state.lng];
         return (React.createElement("div", { className: "multiview-map-component" },
-            React.createElement(react_leaflet_1.Map, { center: position, zoom: this.state.zoom },
+            React.createElement(react_leaflet_1.Map, { center: this.position(), zoom: this.state.zoom },
                 React.createElement(react_leaflet_1.TileLayer, { attribution: "\u00A9 <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors", url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' }),
-                this.state.geojson && this.state.geojsonUrl &&
+                this.state.geojson &&
                     React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, onEachFeature: this.onEachFeature })),
-            React.createElement(DebugView.DebugView, { featureId: Number(this.state.featureId), geojsonUrl: String(this.state.geojsonUrl), onSubmit: function (formData) { return _this.handleSubmit(formData); } })));
+            React.createElement(DebugView.DebugView, { featureId: Number(this.state.featureId), focusId: this.state.focusId, geojsonUrl: String(this.state.geojsonUrl), onSubmit: function (formData) { return _this.handleSubmit(formData); } })));
     };
     return MultiviewMap;
 }(React.Component));
@@ -24161,6 +24194,7 @@ var DebugView = (function (_super) {
         var _this = _super.call(this, props) || this;
         _this.state = {
             featureId: props.featureId,
+            focusId: props.focusId,
             geojsonUrl: props.geojsonUrl,
             handleSubmit: props.onSubmit
         };
@@ -24169,9 +24203,9 @@ var DebugView = (function (_super) {
         return _this;
     }
     DebugView.prototype.componentWillReceiveProps = function (props) {
-        console.log('DebugView.constructor', props);
         this.setState({
             featureId: props.featureId,
+            focusId: props.focusId,
             geojsonUrl: props.geojsonUrl,
             handleSubmit: props.onSubmit
         });
@@ -24187,7 +24221,8 @@ var DebugView = (function (_super) {
     };
     DebugView.prototype.handleSubmit = function (event) {
         this.state.handleSubmit({
-            featureId: Number(this.state.featureId),
+            featureId: Number(this.state.featureId) || null,
+            focusId: Number(this.state.focusId) || null,
             geojsonUrl: this.state.geojsonUrl
         });
         event.preventDefault();
@@ -24196,7 +24231,10 @@ var DebugView = (function (_super) {
         return (React.createElement("form", { onSubmit: this.handleSubmit },
             React.createElement("label", null,
                 "FeatureId:",
-                React.createElement("input", { type: "text", name: 'featureId', value: this.state.featureId, onChange: this.handleInputChange })),
+                React.createElement("input", { type: "number", name: 'featureId', value: this.state.featureId || '', onChange: this.handleInputChange })),
+            React.createElement("label", null,
+                "FocusId:",
+                React.createElement("input", { type: "number", name: 'focusId', value: this.state.focusId || '', onChange: this.handleInputChange })),
             React.createElement("label", null,
                 "GeoJsonURL:",
                 React.createElement("input", { type: "text", name: 'geojsonUrl', value: this.state.geojsonUrl, onChange: this.handleInputChange })),

@@ -1,4 +1,4 @@
-export class MultiviewState {
+export class MultiviewBroadcaster {
   subscribers: any[];
   private _featureId: number;
   private _geojsonUrl: string;
@@ -47,7 +47,7 @@ export class MultiviewState {
     this.notify();
   }
 
-  subscribe(parent: any, callback: (multiviewState: MultiviewState, parent: any) => void) {
+  subscribe(parent: any, callback: (multiviewState: MultiviewBroadcaster, parent: any) => void) {
     this.subscribers.push({ parent: parent, callback: callback });
   }
 

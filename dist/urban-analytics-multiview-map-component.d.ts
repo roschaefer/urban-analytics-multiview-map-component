@@ -24,7 +24,7 @@ export namespace DebugView {
     handleSubmit: (formData: FormData) => void;
   }
 }
-export declare class MultiviewState {
+export declare class MultiviewBroadcaster {
   subscribers: any[];
   private _featureId;
   private _geojsonUrl;
@@ -35,7 +35,7 @@ export declare class MultiviewState {
   focusId: number;
   geojsonUrl: string;
   geojson: any;
-  subscribe(parent: any, callback: (multiviewState: MultiviewState, parent: any) => void): void;
+  subscribe(parent: any, callback: (multiviewState: MultiviewBroadcaster, parent: any) => void): void;
   notify(): void;
 }
 export namespace MultiviewMap {
@@ -58,7 +58,7 @@ export namespace MultiviewMap {
 export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {
   constructor(props: MultiviewMap.Props);
   componentDidMount(): void;
-  handleMultiviewStateChange(context: MultiviewState, that: MultiviewMap): void;
+  handleMultiviewBroadcasterChange(context: MultiviewBroadcaster, that: MultiviewMap): void;
   handleSubmit(formData: DebugView.FormData): void;
   featureStyle(feature: any): Leaflet.PathOptions;
   onEachFeature(feature: any, layer: any): void;
