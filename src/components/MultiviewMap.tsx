@@ -5,14 +5,14 @@ import * as DebugView from './DebugView';
 import { MultiviewController } from '../MultiviewController';
 
 export interface  Props {
-  context: any;
+  controller: any;
   lat?: number;
   lng?: number;
   zoom?: number;
 }
 
 export interface  State {
-  context: any;
+  controller: any;
   geojsonUrl: string;
   geojson: any;
   featureId: number;
@@ -25,7 +25,7 @@ export class MultiviewMap extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      context: props.context,
+      controller: props.controller,
       geojsonUrl: null,
       geojson: null,
       featureId: null,
@@ -37,28 +37,45 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.onEachFeature = this.onEachFeature.bind(this);
   }
 
-  subscriptionMethod(msg:string, data:any) {
-    console.log(msg, data);
-  }
-
-  componentDidMount(){
-    // this.state.context && this.state.context.subscribe(this, this.handleMultiviewControllerChange);
-    this.state.context && this.state.context.subscribe(this.subscriptionMethod);
-  }
-
-  handleMultiviewControllerChange(context: MultiviewController, that: MultiviewMap) {
-    that.setState({
-      featureId: context.featureId,
-      geojsonUrl: context.geojsonUrl,
-      geojson: context.geojson,
-      focusId: context.focusId,
+  handleHighlight(msg:string, data:any) {
+    this.setState({
+      featureId: data,
     });
   }
 
+  handleFocus(msg:string, data:any) {
+    this.setState({
+      focusId: data,
+    });
+  }
+
+  handleUrl(msg:string, data:any) {
+    this.setState({
+      geojsonUrl: data,
+    });
+  }
+
+  handleGeometry(msg:string, data:any) {
+    console.log(this);
+    this.setState({
+      geojson: data,
+    });
+  }
+
+  componentDidMount(){
+   // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
+    if(this.state.controller) {
+      this.state.controller.subscribe('select focus', this.handleFocus);
+      this.state.controller.subscribe('select highlight', this.handleHighlight);
+      this.state.controller.subscribe('reconfigure geometry', this.handleGeometry);
+      this.state.controller.subscribe('reconfigure url', this.handleGeometry);
+    }
+  }
+
   handleSubmit(formData: DebugView.FormData){
-    this.state.context.featureId = formData.featureId;
-    this.state.context.geojsonUrl = formData.geojsonUrl;
-    this.state.context.focusId= formData.focusId;
+    this.state.controller.publish('select highlight', formData.featureId);
+    this.state.controller.publish('select focus', formData.focusId);
+    this.state.controller.publish('reconfigure url', formData.geojsonUrl);
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
@@ -70,11 +87,11 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.featureList.push(feature);
     layer.on({
       mouseover: () => {
-        this.state.context.featureId = feature.id;
+        this.state.controller.publish('select highlight', feature.id);
       },
       click: () => {
-        this.state.context.focusId = feature.id;
-        this.state.context.featureId = feature.id;
+        this.state.controller.publish('select focus', feature.id);
+        this.state.controller.publish('select highlight', feature.id);
       }
     });
   }

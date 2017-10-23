@@ -24,29 +24,20 @@ export namespace DebugView {
     handleSubmit: (formData: FormData) => void;
   }
 }
-export declare class MultiviewBroadcaster {
-  subscribers: any[];
-  private _featureId;
-  private _geojsonUrl;
-  private _geojson;
-  private _focusId;
-  constructor();
-  featureId: number;
-  focusId: number;
-  geojsonUrl: string;
-  geojson: any;
-  subscribe(parent: any, callback: (multiviewState: MultiviewBroadcaster, parent: any) => void): void;
-  notify(): void;
+export declare class MultiviewController {
+    private _geojsonUrl;
+    subscribe(msg: string, callback: (msg: string, data: any) => void): void;
+    publish(msg: string, data: any): void;
 }
 export namespace MultiviewMap {
   export interface Props {
-    context: any;
+    controller: any;
     lat?: number;
     lng?: number;
     zoom?: number;
   }
   export interface State {
-    context: any;
+    controller: any;
     geojsonUrl: string;
     geojson: any;
     featureId: number;
@@ -56,13 +47,16 @@ export namespace MultiviewMap {
   }
 }
 export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {
-  constructor(props: MultiviewMap.Props);
-  componentDidMount(): void;
-  handleMultiviewBroadcasterChange(context: MultiviewBroadcaster, that: MultiviewMap): void;
-  handleSubmit(formData: DebugView.FormData): void;
-  featureStyle(feature: any): Leaflet.PathOptions;
-  onEachFeature(feature: any, layer: any): void;
-  position(): Leaflet.LatLngExpression;
-  render(): JSX.Element;
+    constructor(props: MultiviewMap.Props);
+    handleHighlight(msg: string, data: any): void;
+    handleFocus(msg: string, data: any): void;
+    handleUrl(msg: string, data: any): void;
+    handleGeometry(msg: string, data: any): void;
+    componentDidMount(): void;
+    handleSubmit(formData: DebugView.FormData): void;
+    featureStyle(feature: any): Leaflet.PathOptions;
+    onEachFeature(feature: any, layer: any): void;
+    position(): Leaflet.LatLngExpression;
+    render(): JSX.Element;
 }
 export default MultiviewMap;

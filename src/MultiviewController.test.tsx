@@ -10,20 +10,20 @@ describe("MultiviewController", function() {
       fetch('http://localhost:9876/whatever').then((resp)=> {console.log(resp);});
     });
 
-    it("calls callback", () => {
+    it("makes http request", () => {
       const scope = nock('http://localhost:9876').get('/whatever').reply(200, '{}');
       const multiviewState = new MultiviewController();
       const handleMultiviewControllerChange = sinon.spy()
-      multiviewState.subscribe(handleMultiviewControllerChange);
-      multiviewState.geojsonUrl = 'whatever';
+      multiviewState.subscribe('reconfigure url', handleMultiviewControllerChange);
+      multiviewState.publish('reconfigure url', 'whatever');
       sinon.assert.calledOnce(handleMultiviewControllerChange)
     });
 
-    it("makes http request", () => {
+    it("calls callback", () => {
       const multiviewState = new MultiviewController();
       const handleMultiviewControllerChange = sinon.spy()
-      multiviewState.subscribe(handleMultiviewControllerChange);
-      multiviewState.geojsonUrl = 'whatever';
+      multiviewState.subscribe('reconfigure url', handleMultiviewControllerChange);
+      multiviewState.publish('reconfigure url', 'whatever');
       sinon.assert.calledOnce(handleMultiviewControllerChange)
     });
   })
