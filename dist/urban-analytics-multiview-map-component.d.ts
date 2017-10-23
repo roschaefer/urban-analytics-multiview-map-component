@@ -59,4 +59,20 @@ export declare class MultiviewMap extends React.Component<MultiviewMap.Props, Mu
     position(): Leaflet.LatLngExpression;
     render(): JSX.Element;
 }
+export namespace MessageLog {
+  export interface Props {
+    controller: MultiviewController;
+  }
+  export interface State {
+    controller: MultiviewController;
+    messages: [string, any][];
+  }
+}
+export declare class MessageLog extends React.Component<MessageLog.Props, MessageLog.State> {
+    constructor(props: MessageLog.Props);
+    handleMessage(msg: string, data: any): void;
+    componentDidMount(): void;
+    render(): JSX.Element;
+}
+
 export default MultiviewMap;
