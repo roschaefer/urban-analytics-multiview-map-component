@@ -1,13 +1,10 @@
-export class MultiviewBroadcaster {
-  subscribers: any[];
+import PubSub = require('pubsub-js');
+
+export class MultiviewController {
   private _featureId: number;
   private _geojsonUrl: string;
   private _geojson: any;
   private _focusId: number;
-
-  constructor() {
-    this.subscribers = [];
-  }
 
   get featureId(): number {
     return this._featureId;
@@ -47,14 +44,12 @@ export class MultiviewBroadcaster {
     this.notify();
   }
 
-  subscribe(parent: any, callback: (multiviewState: MultiviewBroadcaster, parent: any) => void) {
-    this.subscribers.push({ parent: parent, callback: callback });
+  subscribe(subscriber: (msg:string, data:any) => void) {
+    PubSub.subscribe('X', subscriber);
   }
 
   public notify() {
-    this.subscribers.forEach((subscriber) => {
-      subscriber.callback(this, subscriber.parent);
-    });
+    PubSub.publish('X', 'hello world');
   }
 }
 

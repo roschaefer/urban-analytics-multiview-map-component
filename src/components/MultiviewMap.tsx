@@ -2,7 +2,7 @@ import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
 import * as DebugView from './DebugView';
-import { MultiviewBroadcaster } from '../MultiviewBroadcaster';
+import { MultiviewController } from '../MultiviewController';
 
 export interface  Props {
   context: any;
@@ -10,6 +10,7 @@ export interface  Props {
   lng?: number;
   zoom?: number;
 }
+
 export interface  State {
   context: any;
   geojsonUrl: string;
@@ -19,6 +20,7 @@ export interface  State {
   focusId: number;
   zoom: number;
 }
+
 export class MultiviewMap extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -34,10 +36,17 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
   }
-  componentDidMount(){
-    this.state.context && this.state.context.subscribe(this, this.handleMultiviewBroadcasterChange);
+
+  subscriptionMethod(msg:string, data:any) {
+    console.log(msg, data);
   }
-  handleMultiviewBroadcasterChange(context: MultiviewBroadcaster, that: MultiviewMap) {
+
+  componentDidMount(){
+    // this.state.context && this.state.context.subscribe(this, this.handleMultiviewControllerChange);
+    this.state.context && this.state.context.subscribe(this.subscriptionMethod);
+  }
+
+  handleMultiviewControllerChange(context: MultiviewController, that: MultiviewMap) {
     that.setState({
       featureId: context.featureId,
       geojsonUrl: context.geojsonUrl,
@@ -45,15 +54,18 @@ export class MultiviewMap extends React.Component<Props, State> {
       focusId: context.focusId,
     });
   }
+
   handleSubmit(formData: DebugView.FormData){
     this.state.context.featureId = formData.featureId;
     this.state.context.geojsonUrl = formData.geojsonUrl;
     this.state.context.focusId= formData.focusId;
   }
+
   featureStyle(feature: any): Leaflet.PathOptions{
     const color = (feature.id === this.state.featureId) ? 'red' : 'blue';
     return { color };
   }
+
   onEachFeature(feature:any, layer:any){
     this.state.featureList.push(feature);
     layer.on({

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
 import { MultiviewMap } from './MultiviewMap';
-import { MultiviewBroadcaster } from '../MultiviewBroadcaster';
+import { MultiviewController } from '../MultiviewController';
 
 const aGeojson:any = {
   "type": "FeatureCollection",
@@ -43,20 +43,20 @@ const aGeojson:any = {
 
 describe("MultiviewMap", function() {
   it("renders", () => {
-    const multiviewState = new MultiviewBroadcaster();
+    const multiviewState = new MultiviewController();
     const wrapper = mount(<MultiviewMap context={multiviewState}/>);
     expect(wrapper.find('.multiview-map-component')).to.have.length(1);
   });
 
   it("renders .leaflet-container", () => {
-    const multiviewState = new MultiviewBroadcaster();
+    const multiviewState = new MultiviewController();
     const wrapper = mount(<MultiviewMap context={multiviewState}/>);
     expect(wrapper.find('.leaflet-container')).to.have.length(1);
   });
 
-  describe('handleMultiviewBroadcasterChange', () => {
+  describe('handleMultiviewControllerChange', () => {
     it('rerenders DebugView', () => {
-    const multiviewState = new MultiviewBroadcaster();
+    const multiviewState = new MultiviewController();
     const wrapper = mount(<MultiviewMap context={multiviewState}/>);
     multiviewState.featureId = 43;
     expect(wrapper.find('input[name="featureId"]').first().props().value).to.eq(43);
@@ -66,7 +66,7 @@ describe("MultiviewMap", function() {
   describe('.leaflet-container', ()=> {
     describe('click on feature', () => {
       it('updates featureId', ()=>{
-        const multiviewState = new MultiviewBroadcaster();
+        const multiviewState = new MultiviewController();
         const wrapper = mount(<MultiviewMap context={multiviewState}/>);
         multiviewState.geojson = aGeojson;
       });

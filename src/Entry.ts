@@ -1,2 +1,2 @@
-export * from './MultiviewBroadcaster';
+export * from './MultiviewController';
 export * from './components/MultiviewMap';
