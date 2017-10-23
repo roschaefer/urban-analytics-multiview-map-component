@@ -35,6 +35,11 @@ export class MultiviewMap extends React.Component<Props, State> {
     };
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
+
+    this.handleHighlight= this.handleHighlight.bind(this);
+    this.handleFocus= this.handleFocus.bind(this);
+    this.handleUrl= this.handleUrl.bind(this);
+    this.handleGeometry= this.handleGeometry.bind(this);
   }
 
   handleHighlight(msg:string, data:any) {
@@ -56,7 +61,6 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   handleGeometry(msg:string, data:any) {
-    console.log(this);
     this.setState({
       geojson: data,
     });
@@ -68,7 +72,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       this.state.controller.subscribe('select focus', this.handleFocus);
       this.state.controller.subscribe('select highlight', this.handleHighlight);
       this.state.controller.subscribe('reconfigure geometry', this.handleGeometry);
-      this.state.controller.subscribe('reconfigure url', this.handleGeometry);
+      this.state.controller.subscribe('reconfigure url', this.handleUrl);
     }
   }
 
@@ -119,7 +123,7 @@ export class MultiviewMap extends React.Component<Props, State> {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
-        { this.state.geojson &&
+        { this.state.geojson && this.state.geojsonUrl &&
           <GeoJSON
             key={this.state.geojsonUrl}
             data={this.state.geojson}
