@@ -113,7 +113,7 @@ export class MultiviewMap extends React.Component<Props, State> {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
-        { this.state.geojson && this.state.geojsonUrl &&
+        { this.state.geojsonUrl && this.state.geojson &&
           <GeoJSON
             key={this.state.geojsonUrl}
             data={this.state.geojson}

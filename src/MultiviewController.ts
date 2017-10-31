@@ -8,21 +8,21 @@ export class MultiviewController {
   }
 
   public publish(msg:string, data:any) {
-        console.log(msg, data)
     if (msg === 'mcv.reconfigure.url'){
       if((this._geojsonUrl == null) || (this._geojsonUrl !== data)){
         this._geojsonUrl = data;
         fetch(data, {
           credentials: "same-origin"
         }).then((resp) => resp.json()).then((response) => {
-          console.log('response', response)
-          this.publish('mcv.reconfigure.geometry', response);
+          PubSub.publish('mcv.reconfigure.geometry', response);
+          PubSub.publish(msg, data);
         }).catch((err) => {
           console.log(err);
         })
       }
+    } else {
+      PubSub.publish(msg, data);
     }
-    PubSub.publish(msg, data);
   }
 
   public clearAllSubscriptions() {
