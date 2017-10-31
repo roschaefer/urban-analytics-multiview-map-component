@@ -4,7 +4,6 @@ import { shallow, mount, render } from 'enzyme';
 import { MultiviewController } from '../MultiviewController';
 import * as DebugView from './DebugView';
 import * as sinon from 'sinon';
-import * as nock from 'nock';
 import * as fetchMock from 'fetch-mock';
 
 
@@ -46,7 +45,6 @@ describe('DebugView', () => {
 
       describe('publish', () => {
         it('called once for all form fields', () => {
-          nock('http://localhost:9876').get('/bundeslaender.geojson').reply(200, '{}');
           const publish = sinon.spy(multiviewController, 'publish');
           const wrapper = mount(<DebugView.DebugView
             featureId={4711}
@@ -58,7 +56,6 @@ describe('DebugView', () => {
         })
 
         it('sends featureId as number', () => {
-          nock('http://localhost:9876').get('/bundeslaender.geojson').reply(200, '{}');
           const publish = sinon.spy(multiviewController, 'publish');
           const wrapper = mount(<DebugView.DebugView
             controller={multiviewController}
