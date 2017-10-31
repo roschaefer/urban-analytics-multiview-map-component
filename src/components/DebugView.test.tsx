@@ -5,7 +5,10 @@ import { MultiviewController } from '../MultiviewController';
 import * as DebugView from './DebugView';
 import * as sinon from 'sinon';
 import * as fetchMock from 'fetch-mock';
+import * as Enzyme from 'enzyme';
+import * as Adapter from 'enzyme-adapter-react-16';
 
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('DebugView', () => {
   let multiviewController: MultiviewController;

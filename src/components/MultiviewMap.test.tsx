@@ -3,6 +3,10 @@ import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
 import { MultiviewMap } from './MultiviewMap';
 import { MultiviewController } from '../MultiviewController';
+import * as Enzyme from 'enzyme';
+import * as Adapter from 'enzyme-adapter-react-16';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 const aGeojson:any = {
   "type": "FeatureCollection",

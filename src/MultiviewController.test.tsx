@@ -2,6 +2,10 @@ import { expect } from 'chai';
 import { MultiviewController } from './MultiviewController';
 import * as sinon from 'sinon';
 import * as fetchMock from 'fetch-mock';
+import * as Enzyme from 'enzyme';
+import * as Adapter from 'enzyme-adapter-react-16';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 const aGeojson:any = {
   "type": "FeatureCollection",
