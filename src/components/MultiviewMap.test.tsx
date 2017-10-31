@@ -54,15 +54,6 @@ describe("MultiviewMap", function() {
     expect(wrapper.find('.leaflet-container')).to.have.length(1);
   });
 
-  describe('handleMultiviewControllerChange', () => {
-    it('rerenders DebugView', () => {
-    const multiviewController = new MultiviewController();
-    const wrapper = mount(<MultiviewMap controller={multiviewController}/>);
-    multiviewController.publish('select highlight', 43);
-    expect(wrapper.find('input[name="featureId"]').first().props().value).to.eq(43);
-    })
-  })
-
   describe('.leaflet-container', ()=> {
     describe('click on feature', () => {
       it('updates featureId', ()=>{

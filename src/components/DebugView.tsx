@@ -1,20 +1,14 @@
 import * as React from "react";
 import { MultiviewController } from '../MultiviewController';
 
-
-export interface FormData {
-  featureId: number;
-  focusId: number;
-  geojsonUrl: string;
-}
 export interface Props {
-  controller: any;
+  controller: MultiviewController;
   featureId?: number;
   focusId?: number;
   geojsonUrl?: string;
 }
 export interface State{
-  controller: any;
+  controller: MultiviewController;
   featureId: number;
   focusId: number;
   geojsonUrl: string;
@@ -27,17 +21,36 @@ export class DebugView extends React.Component<Props, State> {
       controller: props.controller,
       featureId: props.featureId,
       focusId: props.focusId,
-      geojsonUrl: props.geojsonUrl,
+      geojsonUrl: props.geojsonUrl
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleHighlight= this.handleHighlight.bind(this);
+    this.handleFocus= this.handleFocus.bind(this);
+    this.handleUrl= this.handleUrl.bind(this);
   }
-  componentWillReceiveProps(props: Props) {
+
+  componentDidMount(){
+    this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
+    this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
+    this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
+  }
+
+  handleHighlight(msg:string, data:any) {
     this.setState({
-      controller: props.controller,
-      featureId: props.featureId,
-      focusId: props.focusId,
-      geojsonUrl: props.geojsonUrl,
+      featureId: data,
+    });
+  }
+
+  handleFocus(msg:string, data:any) {
+    this.setState({
+      focusId: data,
+    });
+  }
+
+  handleUrl(msg:string, data:any) {
+    this.setState({
+      geojsonUrl: data,
     });
   }
 

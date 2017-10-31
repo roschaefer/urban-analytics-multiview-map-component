@@ -66,13 +66,10 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   componentDidMount(){
-   // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
-    if(this.state.controller) {
-      this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
-      this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
-      this.state.controller.subscribe('mcv.reconfigure.geometry', this.handleGeometry);
-      this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
-    }
+    this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
+    this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
+    this.state.controller.subscribe('mcv.reconfigure.geometry', this.handleGeometry);
+    this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
