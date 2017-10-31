@@ -1,7 +1,6 @@
 import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
-import * as DebugView from './DebugView';
 import { MultiviewController } from '../MultiviewController';
 
 export interface  Props {
@@ -76,12 +75,6 @@ export class MultiviewMap extends React.Component<Props, State> {
     }
   }
 
-  handleSubmit(formData: DebugView.FormData){
-    this.state.controller.publish('mcv.select.highlight', formData.featureId);
-    this.state.controller.publish('mcv.select.focus', formData.focusId);
-    this.state.controller.publish('mcv.reconfigure.url', formData.geojsonUrl);
-  }
-
   featureStyle(feature: any): Leaflet.PathOptions{
     const color = (feature.id === this.state.featureId) ? 'red' : 'blue';
     return { color };
@@ -133,13 +126,6 @@ export class MultiviewMap extends React.Component<Props, State> {
           </GeoJSON>
         }
         </Map>
-
-        <DebugView.DebugView
-        featureId={Number(this.state.featureId)}
-        focusId={this.state.focusId}
-        geojsonUrl={String(this.state.geojsonUrl)}
-        onSubmit={(formData: DebugView.FormData) => this.handleSubmit(formData)}>
-        </DebugView.DebugView>
       </div>
     );
   }
