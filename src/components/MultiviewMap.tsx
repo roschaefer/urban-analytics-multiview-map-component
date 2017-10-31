@@ -15,7 +15,7 @@ export interface  State {
   geojsonUrl: string;
   geojson: any;
   featureId: number;
-  featureList: any [];
+  layerList: any [];
   focusId: number;
   zoom: number;
 }
@@ -28,7 +28,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       geojsonUrl: null,
       geojson: null,
       featureId: null,
-      featureList: [],
+      layerList: [],
       focusId: null,
       zoom: props.zoom || 5.5,
     };
@@ -78,7 +78,7 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   onEachFeature(feature:any, layer:any){
-    this.state.featureList.push(feature);
+    this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
         this.state.controller.publish('mcv.select.highlight', feature.id);
@@ -89,15 +89,12 @@ export class MultiviewMap extends React.Component<Props, State> {
       }
     });
   }
+
   position(): Leaflet.LatLngExpression {
-    const focusedFeature = this.state.featureList.find((feature) => { return feature.id === this.state.focusId });
-    if (focusedFeature) {
-      let polygon: Leaflet.Polygon = new Leaflet.Polygon(focusedFeature.geometry.coordinates);
-      const center: Leaflet.LatLng = polygon.getBounds().getCenter();
-      return {
-        lat: center.lng,
-        lng: center.lat
-      }
+    const focusedLayer = this.state.layerList.find((layer) => { return layer.feature.id === this.state.focusId });
+    if (focusedLayer) {
+      const center: Leaflet.LatLng = focusedLayer.getBounds().getCenter();
+      return center;
     } else {
       return {
         lat: 51.3,
