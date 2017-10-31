@@ -17181,8 +17181,10 @@ var MultiviewController_1 = __webpack_require__(92);
 exports.MultiviewController = MultiviewController_1.MultiviewController;
 var MultiviewMap_1 = __webpack_require__(94);
 exports.MultiviewMap = MultiviewMap_1.MultiviewMap;
-var MessageLog_1 = __webpack_require__(237);
+var MessageLog_1 = __webpack_require__(236);
 exports.MessageLog = MessageLog_1.MessageLog;
+var DebugView_1 = __webpack_require__(237);
+exports.DebugView = DebugView_1.DebugView;
 
 
 /***/ }),
@@ -17200,20 +17202,25 @@ var MultiviewController = (function () {
         PubSub.subscribe(msg, callback);
     };
     MultiviewController.prototype.publish = function (msg, data) {
-        var _this = this;
-        if (msg === 'reconfigure url') {
-            if (this._geojsonUrl !== data) {
+        if (msg === 'mcv.reconfigure.url') {
+            if ((this._geojsonUrl == null) || (this._geojsonUrl !== data)) {
                 this._geojsonUrl = data;
                 fetch(data, {
                     credentials: "same-origin"
                 }).then(function (resp) { return resp.json(); }).then(function (response) {
-                    _this.publish('reconfigure geometry', response);
+                    PubSub.publish('mcv.reconfigure.geometry', response);
+                    PubSub.publish(msg, data);
                 }).catch(function (err) {
                     console.log(err);
                 });
             }
         }
-        PubSub.publish(msg, data);
+        else {
+            PubSub.publish(msg, data);
+        }
+    };
+    MultiviewController.prototype.clearAllSubscriptions = function () {
+        PubSub.clearAllSubscriptions();
     };
     return MultiviewController;
 }());
@@ -17505,7 +17512,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(4);
 var react_leaflet_1 = __webpack_require__(95);
 var Leaflet = __webpack_require__(1);
-var DebugView = __webpack_require__(236);
 var MultiviewMap = (function (_super) {
     __extends(MultiviewMap, _super);
     function MultiviewMap(props) {
@@ -17548,18 +17554,10 @@ var MultiviewMap = (function (_super) {
         });
     };
     MultiviewMap.prototype.componentDidMount = function () {
-        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
-        if (this.state.controller) {
-            this.state.controller.subscribe('select focus', this.handleFocus);
-            this.state.controller.subscribe('select highlight', this.handleHighlight);
-            this.state.controller.subscribe('reconfigure geometry', this.handleGeometry);
-            this.state.controller.subscribe('reconfigure url', this.handleUrl);
-        }
-    };
-    MultiviewMap.prototype.handleSubmit = function (formData) {
-        this.state.controller.publish('select highlight', formData.featureId);
-        this.state.controller.publish('select focus', formData.focusId);
-        this.state.controller.publish('reconfigure url', formData.geojsonUrl);
+        this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
+        this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
+        this.state.controller.subscribe('mcv.reconfigure.geometry', this.handleGeometry);
+        this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
     };
     MultiviewMap.prototype.featureStyle = function (feature) {
         var color = (feature.id === this.state.featureId) ? 'red' : 'blue';
@@ -17570,11 +17568,11 @@ var MultiviewMap = (function (_super) {
         this.state.featureList.push(feature);
         layer.on({
             mouseover: function () {
-                _this.state.controller.publish('select highlight', feature.id);
+                _this.state.controller.publish('mcv.select.highlight', feature.id);
             },
             click: function () {
-                _this.state.controller.publish('select focus', feature.id);
-                _this.state.controller.publish('select highlight', feature.id);
+                _this.state.controller.publish('mcv.select.focus', feature.id);
+                _this.state.controller.publish('mcv.select.highlight', feature.id);
             }
         });
     };
@@ -17597,13 +17595,11 @@ var MultiviewMap = (function (_super) {
         }
     };
     MultiviewMap.prototype.render = function () {
-        var _this = this;
         return (React.createElement("div", { className: "multiview-map-component" },
             React.createElement(react_leaflet_1.Map, { center: this.position(), zoom: this.state.zoom },
                 React.createElement(react_leaflet_1.TileLayer, { attribution: "\u00A9 <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors", url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' }),
-                this.state.geojson && this.state.geojsonUrl &&
-                    React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, onEachFeature: this.onEachFeature })),
-            React.createElement(DebugView.DebugView, { featureId: Number(this.state.featureId), focusId: this.state.focusId, geojsonUrl: String(this.state.geojsonUrl), onSubmit: function (formData) { return _this.handleSubmit(formData); } })));
+                this.state.geojsonUrl && this.state.geojson &&
+                    React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, onEachFeature: this.onEachFeature }))));
     };
     return MultiviewMap;
 }(React.Component));
@@ -24432,81 +24428,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(4);
-var DebugView = (function (_super) {
-    __extends(DebugView, _super);
-    function DebugView(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = {
-            featureId: props.featureId,
-            focusId: props.focusId,
-            geojsonUrl: props.geojsonUrl,
-            handleSubmit: props.onSubmit
-        };
-        _this.handleInputChange = _this.handleInputChange.bind(_this);
-        _this.handleSubmit = _this.handleSubmit.bind(_this);
-        return _this;
-    }
-    DebugView.prototype.componentWillReceiveProps = function (props) {
-        this.setState({
-            featureId: props.featureId,
-            focusId: props.focusId,
-            geojsonUrl: props.geojsonUrl,
-            handleSubmit: props.onSubmit
-        });
-    };
-    DebugView.prototype.handleInputChange = function (event) {
-        var target = event.target;
-        var value = target.type === 'checkbox' ? target.checked : target.value;
-        var name = target.name;
-        this.setState((_a = {},
-            _a[name] = value,
-            _a));
-        var _a;
-    };
-    DebugView.prototype.handleSubmit = function (event) {
-        this.state.handleSubmit({
-            featureId: Number(this.state.featureId) || null,
-            focusId: Number(this.state.focusId) || null,
-            geojsonUrl: this.state.geojsonUrl
-        });
-        event.preventDefault();
-    };
-    DebugView.prototype.render = function () {
-        return (React.createElement("form", { onSubmit: this.handleSubmit },
-            React.createElement("label", null,
-                "FeatureId:",
-                React.createElement("input", { type: "number", name: 'featureId', value: this.state.featureId || '', onChange: this.handleInputChange })),
-            React.createElement("label", null,
-                "FocusId:",
-                React.createElement("input", { type: "number", name: 'focusId', value: this.state.focusId || '', onChange: this.handleInputChange })),
-            React.createElement("label", null,
-                "GeoJsonURL:",
-                React.createElement("input", { type: "text", name: 'geojsonUrl', value: this.state.geojsonUrl, onChange: this.handleInputChange })),
-            React.createElement("input", { type: "submit", value: "Submit" })));
-    };
-    return DebugView;
-}(React.Component));
-exports.DebugView = DebugView;
-
-
-/***/ }),
-/* 237 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(4);
 var MessageLog = (function (_super) {
     __extends(MessageLog, _super);
     function MessageLog(props) {
@@ -24528,10 +24449,7 @@ var MessageLog = (function (_super) {
     MessageLog.prototype.componentDidMount = function () {
         // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
         if (this.state.controller) {
-            this.state.controller.subscribe('select focus', this.handleMessage);
-            this.state.controller.subscribe('select highlight', this.handleMessage);
-            this.state.controller.subscribe('reconfigure geometry', this.handleMessage);
-            this.state.controller.subscribe('reconfigure url', this.handleMessage);
+            this.state.controller.subscribe('mcv', this.handleMessage);
         }
     };
     MessageLog.prototype.render = function () {
@@ -24545,6 +24463,94 @@ var MessageLog = (function (_super) {
 }(React.Component));
 exports.MessageLog = MessageLog;
 exports.default = MessageLog;
+
+
+/***/ }),
+/* 237 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(4);
+var DebugView = (function (_super) {
+    __extends(DebugView, _super);
+    function DebugView(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            controller: props.controller,
+            featureId: props.featureId,
+            focusId: props.focusId,
+            geojsonUrl: props.geojsonUrl
+        };
+        _this.handleInputChange = _this.handleInputChange.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
+        _this.handleHighlight = _this.handleHighlight.bind(_this);
+        _this.handleFocus = _this.handleFocus.bind(_this);
+        _this.handleUrl = _this.handleUrl.bind(_this);
+        return _this;
+    }
+    DebugView.prototype.componentDidMount = function () {
+        this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
+        this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
+        this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
+    };
+    DebugView.prototype.handleHighlight = function (msg, data) {
+        this.setState({
+            featureId: data,
+        });
+    };
+    DebugView.prototype.handleFocus = function (msg, data) {
+        this.setState({
+            focusId: data,
+        });
+    };
+    DebugView.prototype.handleUrl = function (msg, data) {
+        this.setState({
+            geojsonUrl: data,
+        });
+    };
+    DebugView.prototype.handleInputChange = function (event) {
+        var target = event.target;
+        var value = target.type === 'checkbox' ? target.checked : target.value;
+        var name = target.name;
+        this.setState((_a = {},
+            _a[name] = value,
+            _a));
+        var _a;
+    };
+    DebugView.prototype.handleSubmit = function (event) {
+        this.state.controller.publish('mcv.select.highlight', Number(this.state.featureId) || null);
+        this.state.controller.publish('mcv.select.focus', Number(this.state.focusId) || null);
+        this.state.controller.publish('mcv.reconfigure.url', this.state.geojsonUrl);
+        event.preventDefault();
+    };
+    DebugView.prototype.render = function () {
+        return (React.createElement("form", { onSubmit: this.handleSubmit },
+            React.createElement("label", null,
+                "FeatureId:",
+                React.createElement("input", { type: "number", name: 'featureId', value: this.state.featureId || '', onChange: this.handleInputChange })),
+            React.createElement("label", null,
+                "FocusId:",
+                React.createElement("input", { type: "number", name: 'focusId', value: this.state.focusId || '', onChange: this.handleInputChange })),
+            React.createElement("label", null,
+                "GeoJsonURL:",
+                React.createElement("input", { type: "text", name: 'geojsonUrl', value: this.state.geojsonUrl || '', onChange: this.handleInputChange })),
+            React.createElement("input", { type: "submit", value: "Submit" })));
+    };
+    return DebugView;
+}(React.Component));
+exports.DebugView = DebugView;
 
 
 /***/ })
