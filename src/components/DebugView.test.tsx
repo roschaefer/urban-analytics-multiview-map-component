@@ -16,6 +16,10 @@ describe('DebugView', () => {
       multiviewController = new MultiviewController();
     });
 
+    afterEach(() => {
+      multiviewController.clearAllSubscriptions();
+    });
+
     it('filled out featureId', () => {
       const wrapper = shallow(<DebugView.DebugView
         featureId={42}
@@ -34,12 +38,15 @@ describe('DebugView', () => {
 
     describe('controller', () => {
       describe('subscribe', () => {
-        it.skip('rerenders when other views publish', () => {
+        it('rerenders when other views publish', (done) => {
           const wrapper = mount(<DebugView.DebugView
             controller={multiviewController}
             />);
+          multiviewController.subscribe('mcv.reconfigure.url', (msg:string, data:any) =>{
+            expect(wrapper.find('input[name="geojsonUrl"]').first().props().value).to.equal('example.json');
+            done();
+          });
           multiviewController.publish('mcv.reconfigure.url', 'example.json');
-          expect(wrapper.find('input[name="geojsonUrl"]').first().props().value).to.equal('example.json');
         })
       })
 

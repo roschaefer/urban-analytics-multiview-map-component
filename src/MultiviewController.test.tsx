@@ -11,14 +11,16 @@ const aGeojson:any = {
 describe("MultiviewController", function() {
   describe('mcv.reconfigure.url', () => {
 
-    it.skip("makes http request and calls callback", () => {
+    it("makes http request and calls callback", (done) => {
       const multiviewController = new MultiviewController();
-      const handleGeometry = sinon.spy()
+      const handleGeometry = (msg:string, data:any) => {
+        expect(data['type']).to.eq('FeatureCollection');
+        done();
+      }
       multiviewController.subscribe('mcv.reconfigure.geometry', handleGeometry);
-      fetchMock.get('empty.geojson', JSON.stringify(aGeojson));
+      fetchMock.get('some.geojson', JSON.stringify(aGeojson));
 
-      multiviewController.publish('mcv.reconfigure.url', 'empty.geojson');
-      sinon.assert.calledWith(handleGeometry, 'mcv.reconfigure.geometry', {hello: 'world'});
+      multiviewController.publish('mcv.reconfigure.url', 'some.geojson');
     });
 
   })

@@ -27,6 +27,7 @@ export declare class MultiviewController {
   private _geojsonUrl;
   subscribe(msg: string, callback: (msg: string, data: any) => void): void;
   publish(msg: string, data: any): void;
+  clearAllSubscriptions(): void;
 }
 export namespace MultiviewMap {
   export interface Props {
