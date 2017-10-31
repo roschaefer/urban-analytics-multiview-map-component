@@ -15,10 +15,13 @@ export declare class DebugView extends React.Component<DebugView.Props, DebugVie
 export namespace DebugView {
   export interface Props {
     controller: MultiviewController;
+    focusId?: number;
+    highlightedId?: number;
+    geojsonUrl?: string;
   }
   export interface State {
     controller: MultiviewController;
-    featureId: number;
+    highlightedId: number;
     focusId: number;
     geojsonUrl: string;
   }
@@ -40,7 +43,7 @@ export namespace MultiviewMap {
     controller: any;
     geojsonUrl: string;
     geojson: any;
-    featureId: number;
+    highlightedIds: number[];
     featureList: any[];
     focusId: number;
     zoom: number;

@@ -23,12 +23,12 @@ describe('DebugView', () => {
       multiviewController.clearAllSubscriptions();
     });
 
-    it('filled out featureId', () => {
+    it('filled out highlightedId', () => {
       const wrapper = shallow(<DebugView.DebugView
-        featureId={42}
+        highlightedId={42}
         controller={multiviewController}
         />);
-      expect(wrapper.find('input[name="featureId"]').first().props().value).to.equal(42);
+      expect(wrapper.find('input[name="highlightedId"]').first().props().value).to.equal([42]);
     });
 
     it('filled out geojsonUrl', () => {
@@ -57,7 +57,7 @@ describe('DebugView', () => {
         it('called once for all form fields', () => {
           const publish = sinon.spy(multiviewController, 'publish');
           const wrapper = mount(<DebugView.DebugView
-            featureId={4711}
+            highlightedId={4711}
             controller={multiviewController}
             geojsonUrl={'bundeslaender.geojson'}
             />);
@@ -65,21 +65,21 @@ describe('DebugView', () => {
           expect(publish).to.have.property('callCount', 3);
         })
 
-        it('sends featureId as number', () => {
+        it('sends highlightedId as array', () => {
           const publish = sinon.spy(multiviewController, 'publish');
           const wrapper = mount(<DebugView.DebugView
             controller={multiviewController}
-            featureId={4711}
+            highlightedId={4711}
             geojsonUrl={'bundeslaender.geojson'}
             />);
-          wrapper.find('input[name="featureId"]').first().simulate('change', {
+          wrapper.find('input[name="highlightedId"]').first().simulate('change', {
             target: {
-              name: 'featureId',
+              name: 'highlightedId',
               value: '123'
             }
           });
           wrapper.find('input[type="submit"]').first().simulate('submit');
-          sinon.assert.calledWith(publish, 'mcv.select.highlight', 123);
+          sinon.assert.calledWith(publish, 'mcv.select.highlight', [123]);
         })
       })
     })

@@ -14,7 +14,7 @@ export interface  State {
   controller: any;
   geojsonUrl: string;
   geojson: any;
-  featureId: number;
+  highlightedIds: number [];
   layerList: any [];
   focusId: number;
   zoom: number;
@@ -27,7 +27,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       controller: props.controller,
       geojsonUrl: null,
       geojson: null,
-      featureId: null,
+      highlightedIds: null,
       layerList: [],
       focusId: null,
       zoom: props.zoom || 5.5,
@@ -43,7 +43,7 @@ export class MultiviewMap extends React.Component<Props, State> {
 
   handleHighlight(msg:string, data:any) {
     this.setState({
-      featureId: data,
+      highlightedIds: data,
     });
   }
 
@@ -73,7 +73,7 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
-    const color = (feature.id === this.state.featureId) ? 'red' : 'blue';
+    const color = (this.state.highlightedIds.includes(feature.id)) ? 'red' : 'blue';
     return { color };
   }
 
@@ -85,7 +85,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       },
       click: () => {
         this.state.controller.publish('mcv.select.focus', feature.id);
-        this.state.controller.publish('mcv.select.highlight', feature.id);
+        this.state.controller.publish('mcv.select.highlight', Array.of(feature.id));
       }
     });
   }

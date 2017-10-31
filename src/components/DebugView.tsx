@@ -3,13 +3,13 @@ import { MultiviewController } from '../MultiviewController';
 
 export interface Props {
   controller: MultiviewController;
-  featureId?: number;
   focusId?: number;
+  highlightedId?: number;
   geojsonUrl?: string;
 }
 export interface State{
   controller: MultiviewController;
-  featureId: number;
+  highlightedId: number;
   focusId: number;
   geojsonUrl: string;
 }
@@ -19,7 +19,7 @@ export class DebugView extends React.Component<Props, State> {
     super(props);
     this.state = {
       controller: props.controller,
-      featureId: props.featureId,
+      highlightedId: props.highlightedId,
       focusId: props.focusId,
       geojsonUrl: props.geojsonUrl
     };
@@ -38,7 +38,7 @@ export class DebugView extends React.Component<Props, State> {
 
   handleHighlight(msg:string, data:any) {
     this.setState({
-      featureId: data,
+      highlightedId: data[0],
     });
   }
 
@@ -64,7 +64,7 @@ export class DebugView extends React.Component<Props, State> {
   }
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    this.state.controller.publish('mcv.select.highlight', Number(this.state.featureId) || null);
+    this.state.controller.publish('mcv.select.highlight', Array.of(this.state.highlightedId || null));
     this.state.controller.publish('mcv.select.focus', Number(this.state.focusId) || null);
     this.state.controller.publish('mcv.reconfigure.url', this.state.geojsonUrl);
     event.preventDefault();
@@ -74,11 +74,11 @@ export class DebugView extends React.Component<Props, State> {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          FeatureId:
+          First highlighted Id:
           <input
-          type="number"
-          name='featureId'
-          value={this.state.featureId || ''}
+          type='number'
+          name='highlightedId'
+          value={`${this.state.highlightedId}`}
           onChange={this.handleInputChange} />
         </label>
         <label>
