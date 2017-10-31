@@ -1,51 +1,53 @@
 import * as React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
+import { MultiviewController } from '../MultiviewController';
 import * as DebugView from './DebugView';
 import * as sinon from 'sinon';
 
+
 describe('DebugView', () => {
+  let multiviewController: MultiviewController;
   describe('form', () => {
+    beforeEach(() => {
+      multiviewController = new MultiviewController();
+      console.log('beforeEach');
+    });
+
     it('filled out featureId', () => {
       const wrapper = shallow(<DebugView.DebugView
         featureId={42}
-        focusId={undefined}
-        geojsonUrl={null}
-        onSubmit={(formData: DebugView.FormData) => {}}
+        controller={multiviewController}
         />);
       expect(wrapper.find('input[name="featureId"]').first().props().value).to.equal(42);
     });
 
     it('filled out geojsonUrl', () => {
       const wrapper = shallow(<DebugView.DebugView
-        featureId={null}
-        focusId={undefined}
         geojsonUrl={'berlin.geojson'}
-        onSubmit={(formData: DebugView.FormData) => {}}
+        controller={multiviewController}
         />);
       expect(wrapper.find('input[name="geojsonUrl"]').first().props().value).to.equal('berlin.geojson');
     })
 
-    describe('onSubmit', () => {
-      it('called when form is submitted', () => {
-        const onSubmit = sinon.spy();
+    describe('controller', () => {
+      it('called once for all form fields', () => {
+        const publish = sinon.spy(multiviewController, 'publish');
         const wrapper = mount(<DebugView.DebugView
           featureId={4711}
-          focusId={undefined}
+          controller={multiviewController}
           geojsonUrl={'bundeslaender.geojson'}
-          onSubmit={onSubmit}
           />);
         wrapper.find('form').first().simulate('submit');
-        expect(onSubmit).to.have.property('callCount', 1);
+        expect(publish).to.have.property('callCount', 3);
       })
 
       it('sends featureId as number', () => {
-        const onSubmit = sinon.spy();
+        const publish = sinon.spy(multiviewController, 'publish');
         const wrapper = mount(<DebugView.DebugView
+          controller={multiviewController}
           featureId={4711}
-          focusId={undefined}
           geojsonUrl={'bundeslaender.geojson'}
-          onSubmit={onSubmit}
           />);
         wrapper.find('input[name="featureId"]').first().simulate('change', {
           target: {
@@ -54,11 +56,7 @@ describe('DebugView', () => {
           }
         });
         wrapper.find('input[type="submit"]').first().simulate('submit');
-        sinon.assert.calledWith(onSubmit, {
-          featureId: 123,
-          focusId: null,
-          geojsonUrl: 'bundeslaender.geojson'
-        })
+        sinon.assert.calledWith(publish, 'mcv.select.highlight', 123);
       })
     })
   })

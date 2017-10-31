@@ -1,40 +1,43 @@
 import * as React from "react";
+import { MultiviewController } from '../MultiviewController';
+
+
 export interface FormData {
   featureId: number;
   focusId: number;
   geojsonUrl: string;
 }
 export interface Props {
-  featureId: number;
-  focusId: number;
-  geojsonUrl: string;
-  onSubmit: (formData: FormData) => void;
+  controller: any;
+  featureId?: number;
+  focusId?: number;
+  geojsonUrl?: string;
 }
 export interface State{
+  controller: any;
   featureId: number;
   focusId: number;
   geojsonUrl: string;
-  handleSubmit: (formData: FormData) => void;
 }
 
 export class DebugView extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      controller: props.controller,
       featureId: props.featureId,
       focusId: props.focusId,
       geojsonUrl: props.geojsonUrl,
-      handleSubmit: props.onSubmit
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentWillReceiveProps(props: Props) {
     this.setState({
+      controller: props.controller,
       featureId: props.featureId,
       focusId: props.focusId,
       geojsonUrl: props.geojsonUrl,
-      handleSubmit: props.onSubmit
     });
   }
 
@@ -48,11 +51,9 @@ export class DebugView extends React.Component<Props, State> {
   }
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    this.state.handleSubmit({
-      featureId: Number(this.state.featureId) || null, // Yup, `this.state.featureId` might be a string
-      focusId: Number(this.state.focusId) || null,
-      geojsonUrl: this.state.geojsonUrl
-    });
+    this.state.controller.publish('mcv.select.highlight', Number(this.state.featureId) || null);
+    this.state.controller.publish('mcv.select.focus', Number(this.state.focusId) || null);
+    this.state.controller.publish('mcv.reconfigure.url', this.state.geojsonUrl);
     event.preventDefault();
   }
 
@@ -80,7 +81,7 @@ export class DebugView extends React.Component<Props, State> {
           <input
           type="text"
           name='geojsonUrl'
-          value={this.state.geojsonUrl}
+          value={this.state.geojsonUrl || ''}
           onChange={this.handleInputChange} />
         </label>
         <input type="submit" value="Submit" />
