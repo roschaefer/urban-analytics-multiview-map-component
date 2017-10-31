@@ -1,4 +1,5 @@
 node_modules
 dist/*
 !dist/urban-analytics-multiview-map-component.d.ts
+*.tern-port
 
