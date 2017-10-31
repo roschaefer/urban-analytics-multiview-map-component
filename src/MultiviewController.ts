@@ -8,13 +8,13 @@ export class MultiviewController {
   }
 
   public publish(msg:string, data:any) {
-    if (msg === 'reconfigure url'){
+    if (msg === 'mcv.reconfigure.url'){
       if(this._geojsonUrl !== data){
         this._geojsonUrl = data;
         fetch(data, {
           credentials: "same-origin"
         }).then((resp) => resp.json()).then((response) => {
-          this.publish('reconfigure geometry', response);
+          this.publish('mcv.reconfigure.geometry', response);
         }).catch((err) => {
           console.log(err);
         })

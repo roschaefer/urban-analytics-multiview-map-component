@@ -69,17 +69,17 @@ export class MultiviewMap extends React.Component<Props, State> {
   componentDidMount(){
    // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
     if(this.state.controller) {
-      this.state.controller.subscribe('select focus', this.handleFocus);
-      this.state.controller.subscribe('select highlight', this.handleHighlight);
-      this.state.controller.subscribe('reconfigure geometry', this.handleGeometry);
-      this.state.controller.subscribe('reconfigure url', this.handleUrl);
+      this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
+      this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
+      this.state.controller.subscribe('mcv.reconfigure.geometry', this.handleGeometry);
+      this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
     }
   }
 
   handleSubmit(formData: DebugView.FormData){
-    this.state.controller.publish('select highlight', formData.featureId);
-    this.state.controller.publish('select focus', formData.focusId);
-    this.state.controller.publish('reconfigure url', formData.geojsonUrl);
+    this.state.controller.publish('mcv.select.highlight', formData.featureId);
+    this.state.controller.publish('mcv.select.focus', formData.focusId);
+    this.state.controller.publish('mcv.reconfigure.url', formData.geojsonUrl);
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
@@ -91,11 +91,11 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.featureList.push(feature);
     layer.on({
       mouseover: () => {
-        this.state.controller.publish('select highlight', feature.id);
+        this.state.controller.publish('mcv.select.highlight', feature.id);
       },
       click: () => {
-        this.state.controller.publish('select focus', feature.id);
-        this.state.controller.publish('select highlight', feature.id);
+        this.state.controller.publish('mcv.select.focus', feature.id);
+        this.state.controller.publish('mcv.select.highlight', feature.id);
       }
     });
   }

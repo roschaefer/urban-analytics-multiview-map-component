@@ -33,10 +33,7 @@ export class MessageLog extends React.Component<Props, State> {
   componentDidMount(){
    // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
     if(this.state.controller) {
-      this.state.controller.subscribe('select focus', this.handleMessage);
-      this.state.controller.subscribe('select highlight', this.handleMessage);
-      this.state.controller.subscribe('reconfigure geometry', this.handleMessage);
-      this.state.controller.subscribe('reconfigure url', this.handleMessage);
+      this.state.controller.subscribe('mcv', this.handleMessage);
     }
   }
 

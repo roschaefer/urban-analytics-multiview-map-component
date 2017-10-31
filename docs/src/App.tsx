@@ -16,6 +16,6 @@ ReactDOM.render(
 );
 
 setTimeout(function() {
-  controller.publish('select highlight', 1);
-  controller.publish('reconfigure url', 'data/bundeslaender.geojson');
+  controller.publish('mcv.select.highlight', 1);
+  controller.publish('mcv.reconfigure.url', 'data/bundeslaender.geojson');
 }, 1000);
