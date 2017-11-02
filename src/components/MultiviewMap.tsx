@@ -2,6 +2,7 @@ import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
 import { MultiviewController } from '../MultiviewController';
+let SelectArea = require('leaflet-area-select');
 
 export interface  Props {
   controller: any;
@@ -21,7 +22,8 @@ export interface  State {
 }
 
 export class MultiviewMap extends React.Component<Props, State> {
-  _map: Map;
+  _map: any;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -72,9 +74,11 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.controller.subscribe('mcv.reconfigure.geometry', this.handleGeometry);
     this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
 
-    this._map.leafletElement.on('boxzoomend', (e:any)=>{
+    this._map.leafletElement.selectArea.enable();
+    this._map.leafletElement.selectArea.setShiftKey(true);
+    this._map.leafletElement.on('areaselected', (e:any)=>{
       const selectedlayers :any[] = this.state.layerList.filter((layer) => {
-        return e.boxZoomBounds.intersects(layer.getBounds());
+        return e.bounds.intersects(layer.getBounds());
       });
       const selectedFeatures = selectedlayers.map((layer) => { return layer.feature.id });
       this.state.controller.publish('mcv.select.highlight', selectedFeatures);
