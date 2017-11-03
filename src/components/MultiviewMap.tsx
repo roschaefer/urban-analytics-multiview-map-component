@@ -13,11 +13,11 @@ export interface  Props {
 
 export interface  State {
   controller: any;
-  geojsonUrl: string;
-  geojson: any;
-  highlightedIds: number [];
+  geojsonUrl?: string;
+  geojson?: any;
+  highlightedIds?: number [];
+  focusId?: number;
   layerList: any [];
-  focusId: number;
   zoom: number;
 }
 
@@ -28,11 +28,7 @@ export class MultiviewMap extends React.Component<Props, State> {
     super(props);
     this.state = {
       controller: props.controller,
-      geojsonUrl: null,
-      geojson: null,
-      highlightedIds: null,
       layerList: [],
-      focusId: null,
       zoom: props.zoom || 5.5,
     };
     this.featureStyle = this.featureStyle.bind(this);
@@ -77,7 +73,7 @@ export class MultiviewMap extends React.Component<Props, State> {
     this._map.leafletElement.selectArea.enable();
     this._map.leafletElement.selectArea.setShiftKey(true);
     this._map.leafletElement.on('areaselected', (e:any)=>{
-      const selectedlayers :any[] = this.state.layerList.filter((layer) => {
+      const selectedlayers:any[] = this.state.layerList.filter((layer) => {
         return e.bounds.intersects(layer.getBounds());
       });
       const selectedFeatures = selectedlayers.map((layer) => { return layer.feature.id });

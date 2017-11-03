@@ -28,7 +28,7 @@ describe('DebugView', () => {
         highlightedId={42}
         controller={multiviewController}
         />);
-      expect(wrapper.find('input[name="highlightedId"]').first().props().value).to.equal([42]);
+      expect(wrapper.find('input[name="highlightedId"]').first().props().value).to.equal(42);
     });
 
     it('filled out geojsonUrl', () => {
@@ -46,6 +46,7 @@ describe('DebugView', () => {
             controller={multiviewController}
             />);
           multiviewController.subscribe('mcv.reconfigure.url', (msg:string, data:any) =>{
+            wrapper.update();
             expect(wrapper.find('input[name="geojsonUrl"]').first().props().value).to.equal('example.json');
             done();
           });

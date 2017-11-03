@@ -19,9 +19,9 @@ export class DebugView extends React.Component<Props, State> {
     super(props);
     this.state = {
       controller: props.controller,
-      highlightedId: props.highlightedId,
-      focusId: props.focusId,
-      geojsonUrl: props.geojsonUrl
+      highlightedId: props.highlightedId || 0,
+      focusId: props.focusId || 0,
+      geojsonUrl: props.geojsonUrl || ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -64,8 +64,8 @@ export class DebugView extends React.Component<Props, State> {
   }
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    this.state.controller.publish('mcv.select.highlight', Array.of(this.state.highlightedId || null));
-    this.state.controller.publish('mcv.select.focus', Number(this.state.focusId) || null);
+    this.state.controller.publish('mcv.select.highlight', Array.of(Number(this.state.highlightedId)));
+    this.state.controller.publish('mcv.select.focus', Number(this.state.focusId));
     this.state.controller.publish('mcv.reconfigure.url', this.state.geojsonUrl);
     event.preventDefault();
   }
@@ -78,7 +78,7 @@ export class DebugView extends React.Component<Props, State> {
           <input
           type='number'
           name='highlightedId'
-          value={`${this.state.highlightedId}`}
+          value={this.state.highlightedId || ''}
           onChange={this.handleInputChange} />
         </label>
         <label>
