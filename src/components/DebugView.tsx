@@ -3,14 +3,14 @@ import { MultiviewController } from '../MultiviewController';
 
 export interface Props {
   controller: MultiviewController;
-  focusId?: number;
+  focusedId?: number;
   highlightedId?: number;
   geojsonUrl?: string;
 }
 export interface State{
   controller: MultiviewController;
   highlightedId: number;
-  focusId: number;
+  focusedId: number;
   geojsonUrl: string;
 }
 
@@ -20,7 +20,7 @@ export class DebugView extends React.Component<Props, State> {
     this.state = {
       controller: props.controller,
       highlightedId: props.highlightedId || 0,
-      focusId: props.focusId || 0,
+      focusedId: props.focusedId || 0,
       geojsonUrl: props.geojsonUrl || ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -44,7 +44,7 @@ export class DebugView extends React.Component<Props, State> {
 
   handleFocus(msg:string, data:any) {
     this.setState({
-      focusId: data,
+      focusedId: data[0],
     });
   }
 
@@ -65,7 +65,7 @@ export class DebugView extends React.Component<Props, State> {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     this.state.controller.publish('mcv.select.highlight', Array.of(Number(this.state.highlightedId)));
-    this.state.controller.publish('mcv.select.focus', Number(this.state.focusId));
+    this.state.controller.publish('mcv.select.focus', Array.of(Number(this.state.focusedId)));
     this.state.controller.publish('mcv.reconfigure.url', this.state.geojsonUrl);
     event.preventDefault();
   }
@@ -78,7 +78,7 @@ export class DebugView extends React.Component<Props, State> {
           <input
           type='number'
           name='highlightedId'
-          value={this.state.highlightedId || ''}
+          value={this.state.highlightedId}
           onChange={this.handleInputChange} />
         </label>
         <label>

@@ -16,7 +16,7 @@ export interface  State {
   geojsonUrl?: string;
   geojson?: any;
   highlightedIds?: number [];
-  focusId?: number;
+  focusedIds?: number [];
   layerList: any [];
   zoom: number;
 }
@@ -29,6 +29,8 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state = {
       controller: props.controller,
       layerList: [],
+      focusedIds: [],
+      highlightedIds: [],
       zoom: props.zoom || 5.5,
     };
     this.featureStyle = this.featureStyle.bind(this);
@@ -48,7 +50,7 @@ export class MultiviewMap extends React.Component<Props, State> {
 
   handleFocus(msg:string, data:any) {
     this.setState({
-      focusId: data,
+      focusedIds: data,
     });
   }
 
@@ -82,7 +84,14 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
-    const color = (this.state.highlightedIds.includes(feature.id)) ? 'red' : 'blue';
+		let color;
+		if (this.state.focusedIds.includes(feature.id)) {
+			color = 'green';
+		} else if (this.state.highlightedIds.includes(feature.id)) {
+			color = 'red'; 
+		} else {
+			color = 'blue'; 
+		}
     return { color };
   }
 
@@ -90,14 +99,14 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.layerList.push(layer);
     layer.on({
       click: () => {
-        this.state.controller.publish('mcv.select.focus', feature.id);
+        this.state.controller.publish('mcv.select.focus', Array.of(feature.id));
         this.state.controller.publish('mcv.select.highlight', Array.of(feature.id));
       }
     });
   }
 
   position(): Leaflet.LatLngExpression {
-    const focusedLayer = this.state.layerList.find((layer) => { return layer.feature.id === this.state.focusId });
+    const focusedLayer = this.state.layerList.find((layer) => { return this.state.focusedIds.includes(layer.feature.id) });
     if (focusedLayer) {
       const center: Leaflet.LatLng = focusedLayer.getBounds().getCenter();
       return center;
