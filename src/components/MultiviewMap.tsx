@@ -76,19 +76,19 @@ export class MultiviewMap extends React.Component<Props, State> {
     this._map.leafletElement.selectArea.enable();
     this._map.leafletElement.selectArea.setShiftKey(true);
     this._map.leafletElement.on('areaselected', (e:any)=>{
-      const selectedlayers:any[] = this.state.layerList.filter((layer) => {
+      const selectedLayers:any[] = this.state.layerList.filter((layer) => {
         return e.bounds.intersects(layer.getBounds());
       });
-      const selectedFeatureIds= selectedlayers.map((layer) => { return layer.feature.id });
+      const selectedFeatureIds= selectedLayers.map((layer) => { return layer.feature.id });
       this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
     })
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
-		let color = (this.state.focusedIds.includes(feature.id)) ? Color('red') : Color('blue');
-		if (this.state.highlightedIds.includes(feature.id)) {
-			color = color.lighten(0.5);
-		}
+    let color = (this.state.focusedIds.includes(feature.id)) ? Color('red') : Color('blue');
+    if (this.state.highlightedIds.includes(feature.id)) {
+      color = color.lighten(0.5);
+    }
     return { color };
   }
 
@@ -96,10 +96,10 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
-        this.state.controller.publish('mcv.select.highlight', Array.of(feature.id));
+        this.state.controller.publish('mcv.select.highlight', Array.of(layer.feature.id));
       },
       click: () => {
-        this.state.controller.publish('mcv.select.focus', Array.of(feature.id));
+        this.state.controller.publish('mcv.select.focus', Array.of(layer.feature.id));
       }
     });
   }
@@ -110,7 +110,6 @@ export class MultiviewMap extends React.Component<Props, State> {
       const bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
         return result.extend(layer.getBounds());
       }, focusedLayers[0].getBounds());
-      console.log(bounds)
       return bounds;
     } else {
       return new Leaflet.LatLngBounds({
