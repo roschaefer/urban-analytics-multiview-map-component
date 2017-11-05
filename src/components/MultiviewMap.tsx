@@ -104,23 +104,29 @@ export class MultiviewMap extends React.Component<Props, State> {
     });
   }
 
-  position(): Leaflet.LatLngExpression {
-    const focusedLayer = this.state.layerList.find((layer) => { return this.state.focusedIds.includes(layer.feature.id) });
-    if (focusedLayer) {
-      const center: Leaflet.LatLng = focusedLayer.getBounds().getCenter();
-      return center;
+  bounds(): Leaflet.LatLngBounds {
+    const focusedLayers = this.state.layerList.filter((layer) => { return this.state.focusedIds.includes(layer.feature.id) });
+    if (focusedLayers.length > 0) {
+      const bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
+        return result.extend(layer.getBounds());
+      }, focusedLayers[0].getBounds());
+      console.log(bounds)
+      return bounds;
     } else {
-      return {
-        lat: 51.3,
-        lng: 10
-      }
+      return new Leaflet.LatLngBounds({
+        lat: 55.05652618408226,
+        lng: 15.03811264038086
+      }, {
+        lat: 47.26990127563505,
+        lng: 5.87161922454851
+      });
     }
   }
 
   render() {
     return (
       <div className="multiview-map-component">
-        <Map ref={(m) => this._map= m} center={this.position()} zoom={this.state.zoom}>
+        <Map ref={(m) => this._map= m} bounds={this.bounds()}>
         <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
