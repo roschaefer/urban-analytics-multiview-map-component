@@ -78,16 +78,16 @@ export class MultiviewMap extends React.Component<Props, State> {
       const selectedlayers:any[] = this.state.layerList.filter((layer) => {
         return e.bounds.intersects(layer.getBounds());
       });
-      const selectedFeatures = selectedlayers.map((layer) => { return layer.feature.id });
-      this.state.controller.publish('mcv.select.highlight', selectedFeatures);
+      const selectedFeatureIds= selectedlayers.map((layer) => { return layer.feature.id });
+      this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
     })
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
 		let color;
-		if (this.state.focusedIds.includes(feature.id)) {
+		if (this.state.highlightedIds.includes(feature.id)) {
 			color = 'green';
-		} else if (this.state.highlightedIds.includes(feature.id)) {
+		} else if (this.state.focusedIds.includes(feature.id)) {
 			color = 'red'; 
 		} else {
 			color = 'blue'; 
@@ -98,9 +98,11 @@ export class MultiviewMap extends React.Component<Props, State> {
   onEachFeature(feature:any, layer:any){
     this.state.layerList.push(layer);
     layer.on({
+      mouseover: () => {
+        this.state.controller.publish('mcv.select.highlight', Array.of(feature.id));
+      },
       click: () => {
         this.state.controller.publish('mcv.select.focus', Array.of(feature.id));
-        this.state.controller.publish('mcv.select.highlight', Array.of(feature.id));
       }
     });
   }
