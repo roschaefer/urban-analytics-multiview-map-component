@@ -74,14 +74,14 @@ export class MultiviewMap extends React.Component<Props, State> {
       const selectedLayers:any[] = this.state.layerList.filter((layer) => {
         return e.bounds.intersects(layer.getBounds());
       });
-      const selectedFeatureIds = selectedLayers.map((layer) => { return layer.feature.id });
+      const selectedFeatureIds = selectedLayers.map((layer) => { return Number(layer.feature.id) });
       this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
     })
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
-    let color = (this.state.focusedIds.includes(feature.id)) ? Color('red') : Color('blue');
-    if (this.state.highlightedIds.includes(feature.id)) {
+    let color = (this.state.focusedIds.includes(Number(feature.id))) ? Color('red') : Color('blue');
+    if (this.state.highlightedIds.includes(Number(feature.id))) {
       color = color.lighten(0.5);
     }
     return { color };
@@ -91,18 +91,19 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
-        this.state.controller.publish('mcv.select.highlight', Array.of(layer.feature.id));
+        this.state.controller.publish('mcv.select.highlight', Array.of(Number(layer.feature.id)));
       },
       click: () => {
-        this.state.controller.publish('mcv.select.focus', Array.of(layer.feature.id));
+        this.state.controller.publish('mcv.select.focus', Array.of(Number(layer.feature.id)));
       }
     });
   }
 
   bounds(): Leaflet.LatLngBounds {
-    const focusedLayers = this.state.layerList.filter((layer) => { return this.state.focusedIds.includes(layer.feature.id) });
+    let focusedLayers = this.state.layerList.filter((layer) => { return this.state.focusedIds.includes(Number(layer.feature.id)) });
+    console.log(focusedLayers);
     if (focusedLayers.length > 0) {
-      const bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
+      let bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
         return result.extend(layer.getBounds());
       }, focusedLayers[0].getBounds());
       return bounds;
@@ -118,9 +119,10 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   render() {
+    let bounds: Leaflet.LatLngBounds = this.bounds();
     return (
       <div className="multiview-map-component">
-        <Map ref={(m) => this._map= m} bounds={this.bounds()}>
+        <Map ref={(m) => this._map= m} bounds={bounds}>
         <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
