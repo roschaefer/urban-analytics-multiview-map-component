@@ -2,7 +2,8 @@ import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
 import { MultiviewController } from '../MultiviewController';
-let SelectArea = require('leaflet-area-select');
+const SelectArea = require('leaflet-area-select');
+const Color = require('color');
 
 export interface  Props {
   controller: any;
@@ -84,13 +85,9 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
-		let color;
+		let color = (this.state.focusedIds.includes(feature.id)) ? Color('red') : Color('blue');
 		if (this.state.highlightedIds.includes(feature.id)) {
-			color = 'green';
-		} else if (this.state.focusedIds.includes(feature.id)) {
-			color = 'red'; 
-		} else {
-			color = 'blue'; 
+			color = color.lighten(0.5);
 		}
     return { color };
   }
