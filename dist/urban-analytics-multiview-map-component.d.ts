@@ -15,14 +15,14 @@ export declare class DebugView extends React.Component<DebugView.Props, DebugVie
 export namespace DebugView {
   export interface Props {
     controller: MultiviewController;
-    focusId?: number;
+    focusedId?: number;
     highlightedId?: number;
     geojsonUrl?: string;
   }
   export interface State {
     controller: MultiviewController;
     highlightedId: number;
-    focusId: number;
+    focusedId: number;
     geojsonUrl: string;
   }
 }
@@ -35,18 +35,14 @@ export declare class MultiviewController {
 export namespace MultiviewMap {
   export interface Props {
     controller: any;
-    lat?: number;
-    lng?: number;
-    zoom?: number;
   }
   export interface State {
     controller: any;
-    geojsonUrl: string;
-    geojson: any;
-    highlightedIds: number[];
-    featureList: any[];
-    focusId: number;
-    zoom: number;
+    geojsonUrl?: string;
+    geojson?: any;
+    highlightedIds?: number[];
+    focusedIds?: number[];
+    layerList: any[];
   }
 }
 export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {
@@ -58,7 +54,7 @@ export declare class MultiviewMap extends React.Component<MultiviewMap.Props, Mu
   componentDidMount(): void;
   featureStyle(feature: any): Leaflet.PathOptions;
   onEachFeature(feature: any, layer: any): void;
-  position(): Leaflet.LatLngExpression;
+  bounds(): Leaflet.LatLngBounds;
   render(): JSX.Element;
 }
 export namespace MessageLog {

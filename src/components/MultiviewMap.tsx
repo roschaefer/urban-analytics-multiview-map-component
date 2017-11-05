@@ -16,7 +16,6 @@ export interface  State {
   highlightedIds?: number [];
   focusedIds?: number [];
   layerList: any [];
-  zoom: number;
 }
 
 export class MultiviewMap extends React.Component<Props, State> {
