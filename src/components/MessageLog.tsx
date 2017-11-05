@@ -23,7 +23,7 @@ export class MessageLog extends React.Component<Props, State> {
 
   handleMessage(msg:string, data:any) {
     let temp = this.state.messages;
-    temp.push([msg, data]);
+    temp.unshift([msg, data]);
     this.setState({
       messages: temp
     });
@@ -45,7 +45,7 @@ export class MessageLog extends React.Component<Props, State> {
       <ul>
       {
         this.state.messages.map(function(messages, index){
-          return <li key={ index }>{messages[0]}</li>;
+          return <li key={ index }>{messages[0]}: {String(messages[1])}</li>;
         })
       }
       </ul>
