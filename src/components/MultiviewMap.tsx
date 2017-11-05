@@ -7,9 +7,6 @@ const Color = require('color');
 
 export interface  Props {
   controller: any;
-  lat?: number;
-  lng?: number;
-  zoom?: number;
 }
 
 export interface  State {
@@ -32,7 +29,6 @@ export class MultiviewMap extends React.Component<Props, State> {
       layerList: [],
       focusedIds: [],
       highlightedIds: [],
-      zoom: props.zoom || 5.5,
     };
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
@@ -79,7 +75,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       const selectedLayers:any[] = this.state.layerList.filter((layer) => {
         return e.bounds.intersects(layer.getBounds());
       });
-      const selectedFeatureIds= selectedLayers.map((layer) => { return layer.feature.id });
+      const selectedFeatureIds = selectedLayers.map((layer) => { return layer.feature.id });
       this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
     })
   }
