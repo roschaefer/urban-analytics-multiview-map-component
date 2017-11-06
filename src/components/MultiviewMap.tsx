@@ -48,6 +48,7 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.setState({
       focusedIds: data,
     });
+    this._map.leafletElement.fitBounds(this.bounds());
   }
 
   handleUrl(msg:string, data:any) {
@@ -101,7 +102,6 @@ export class MultiviewMap extends React.Component<Props, State> {
 
   bounds(): Leaflet.LatLngBounds {
     let focusedLayers = this.state.layerList.filter((layer) => { return this.state.focusedIds.includes(Number(layer.feature.id)) });
-    console.log(focusedLayers);
     if (focusedLayers.length > 0) {
       let bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
         return result.extend(layer.getBounds());
@@ -119,10 +119,9 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   render() {
-    let bounds: Leaflet.LatLngBounds = this.bounds();
     return (
       <div className="multiview-map-component">
-        <Map ref={(m) => this._map= m} bounds={bounds}>
+        <Map ref={(m) => this._map= m} bounds={this.bounds()}>
         <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
