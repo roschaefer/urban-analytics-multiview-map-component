@@ -2,36 +2,32 @@ import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
 import { MultiviewController } from '../MultiviewController';
+const SelectArea = require('leaflet-area-select');
+const Color = require('color');
 
 export interface  Props {
   controller: any;
-  lat?: number;
-  lng?: number;
-  zoom?: number;
 }
 
 export interface  State {
   controller: any;
-  geojsonUrl: string;
-  geojson: any;
-  highlightedIds: number [];
+  geojsonUrl?: string;
+  geojson?: any;
+  highlightedIds?: number [];
+  focusedIds?: number [];
   layerList: any [];
-  focusId: number;
-  zoom: number;
 }
 
 export class MultiviewMap extends React.Component<Props, State> {
-  _map: Map;
+  _map: any;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       controller: props.controller,
-      geojsonUrl: null,
-      geojson: null,
-      highlightedIds: null,
       layerList: [],
-      focusId: null,
-      zoom: props.zoom || 5.5,
+      focusedIds: [],
+      highlightedIds: [],
     };
     this.featureStyle = this.featureStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
@@ -50,8 +46,9 @@ export class MultiviewMap extends React.Component<Props, State> {
 
   handleFocus(msg:string, data:any) {
     this.setState({
-      focusId: data,
+      focusedIds: data,
     });
+    this._map.leafletElement.fitBounds(this.bounds());
   }
 
   handleUrl(msg:string, data:any) {
@@ -72,47 +69,59 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.controller.subscribe('mcv.reconfigure.geometry', this.handleGeometry);
     this.state.controller.subscribe('mcv.reconfigure.url', this.handleUrl);
 
-    this._map.leafletElement.on('boxzoomend', (e:any)=>{
-      const selectedlayers :any[] = this.state.layerList.filter((layer) => {
-        return e.boxZoomBounds.intersects(layer.getBounds());
+    this._map.leafletElement.selectArea.enable();
+    this._map.leafletElement.selectArea.setShiftKey(true);
+    this._map.leafletElement.on('areaselected', (e:any)=>{
+      const selectedLayers:any[] = this.state.layerList.filter((layer) => {
+        return e.bounds.intersects(layer.getBounds());
       });
-      const selectedFeatures = selectedlayers.map((layer) => { return layer.feature.id });
-      this.state.controller.publish('mcv.select.highlight', selectedFeatures);
-    });
+      const selectedFeatureIds = selectedLayers.map((layer) => { return Number(layer.feature.id) });
+      this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
+    })
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
-    const color = (this.state.highlightedIds.includes(feature.id)) ? 'red' : 'blue';
+    let color = (this.state.focusedIds.includes(Number(feature.id))) ? Color('red') : Color('blue');
+    if (this.state.highlightedIds.includes(Number(feature.id))) {
+      color = color.lighten(0.5);
+    }
     return { color };
   }
 
   onEachFeature(feature:any, layer:any){
     this.state.layerList.push(layer);
     layer.on({
+      mouseover: () => {
+        this.state.controller.publish('mcv.select.highlight', Array.of(Number(layer.feature.id)));
+      },
       click: () => {
-        this.state.controller.publish('mcv.select.focus', feature.id);
-        this.state.controller.publish('mcv.select.highlight', Array.of(feature.id));
+        this.state.controller.publish('mcv.select.focus', Array.of(Number(layer.feature.id)));
       }
     });
   }
 
-  position(): Leaflet.LatLngExpression {
-    const focusedLayer = this.state.layerList.find((layer) => { return layer.feature.id === this.state.focusId });
-    if (focusedLayer) {
-      const center: Leaflet.LatLng = focusedLayer.getBounds().getCenter();
-      return center;
+  bounds(): Leaflet.LatLngBounds {
+    let focusedLayers = this.state.layerList.filter((layer) => { return this.state.focusedIds.includes(Number(layer.feature.id)) });
+    if (focusedLayers.length > 0) {
+      let bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
+        return result.extend(layer.getBounds());
+      }, focusedLayers[0].getBounds());
+      return bounds;
     } else {
-      return {
-        lat: 51.3,
-        lng: 10
-      }
+      return new Leaflet.LatLngBounds({
+        lat: 55.05652618408226,
+        lng: 15.03811264038086
+      }, {
+        lat: 47.26990127563505,
+        lng: 5.87161922454851
+      });
     }
   }
 
   render() {
     return (
       <div className="multiview-map-component">
-        <Map ref={(m) => this._map= m} center={this.position()} zoom={this.state.zoom}>
+        <Map ref={(m) => this._map= m} bounds={this.bounds()}>
         <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'

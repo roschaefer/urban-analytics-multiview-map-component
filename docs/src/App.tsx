@@ -6,7 +6,7 @@ let controller = new MultiviewController();
 
 
 ReactDOM.render(
-  <MultiviewMap controller={controller} lat={undefined} lng={undefined} zoom={5}/>,
+  <MultiviewMap controller={controller}/>,
   document.getElementById('multiview-map-component')
 );
 
