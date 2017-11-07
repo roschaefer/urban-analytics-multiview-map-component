@@ -78,7 +78,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       });
       const selectedFeatures = selectedlayers.map((layer) => { return layer.feature.id });
       this.state.controller.publish('mcv.select.highlight', selectedFeatures);
-    })
+    });
   }
 
   featureStyle(feature: any): Leaflet.PathOptions{
