@@ -78,7 +78,7 @@ export class DebugView extends React.Component<Props, State> {
           <input
           type='number'
           name='highlightedId'
-          value={this.state.highlightedId}
+          value={this.state.highlightedId || ''}
           onChange={this.handleInputChange} />
         </label>
         <label>
@@ -86,7 +86,7 @@ export class DebugView extends React.Component<Props, State> {
           <input
           type="number"
           name='focusedId'
-          value={this.state.focusedId}
+          value={this.state.focusedId || ''}
           onChange={this.handleInputChange} />
         </label>
         <label>

@@ -92,10 +92,19 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
-        this.state.controller.publish('mcv.select.highlight', Array.of(Number(layer.feature.id)));
+        this.state.controller.publish('mcv.select.highlight', [Number(layer.feature.id)]);
       },
-      click: () => {
-        this.state.controller.publish('mcv.select.focus', Array.of(Number(layer.feature.id)));
+      click: (event: Leaflet.LeafletMouseEvent) => {
+        if(event.originalEvent.ctrlKey){
+          // no lodash here, otherwise just _.xor(focusedIds, [id])
+          const id: number = Number(layer.feature.id);
+          let focusedIds: Set<Number> = new Set(this.state.focusedIds);
+          if(!focusedIds.delete(id)) { focusedIds.add(id) };
+          this.state.controller.publish('mcv.select.focus', Array.from(focusedIds));
+        } else {
+          this.state.controller.publish('mcv.select.focus', [Number(layer.feature.id)]);
+        }
+
       }
     });
   }
