@@ -63,6 +63,15 @@ export class MultiviewMap extends React.Component<Props, State> {
     });
   }
 
+  layerToBounds(layer: any): Leaflet.LatLngBounds{
+    switch(layer.feature.geometry.type){
+      case "Point":
+        return new Leaflet.LatLngBounds([layer.getLatLng()]);
+      default:
+        return layer.getBounds();
+    }
+  }
+
   componentDidMount(){
     this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
     this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
@@ -73,7 +82,7 @@ export class MultiviewMap extends React.Component<Props, State> {
     this._map.leafletElement.selectArea.setShiftKey(true);
     this._map.leafletElement.on('areaselected', (e:any)=>{
       const selectedLayers:any[] = this.state.layerList.filter((layer) => {
-        return e.bounds.intersects(layer.getBounds());
+        return e.bounds.intersects(this.layerToBounds(layer));
       });
       const selectedFeatureIds = selectedLayers.map((layer) => { return Number(layer.feature.id) });
       this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
@@ -110,12 +119,18 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   bounds(): Leaflet.LatLngBounds {
-    let focusedLayers = this.state.layerList.filter((layer) => { return this.state.focusedIds.includes(Number(layer.feature.id)) });
+    let focusedLayers = this.state.layerList.filter((layer) => {
+      return this.state.focusedIds.includes(Number(layer.feature.id))
+    });
     if (focusedLayers.length > 0) {
-      let bounds: Leaflet.LatLngBounds = focusedLayers.reduce((result, layer) => {
-        return result.extend(layer.getBounds());
-      }, focusedLayers[0].getBounds());
-      return bounds;
+      console.log(focusedLayers);
+      let bounds: Leaflet.LatLngBounds[] = focusedLayers.map((layer) => {
+        return this.layerToBounds(layer)
+      });
+      let result: Leaflet.LatLngBounds = bounds.reduce((result: Leaflet.LatLngBounds, bounds: Leaflet.LatLngBounds) => {
+        return result.extend(bounds);
+      }, bounds[0]);
+      return result;
     } else {
       return new Leaflet.LatLngBounds({
         lat: 55.05652618408226,
