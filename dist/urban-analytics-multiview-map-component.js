@@ -18624,6 +18624,7 @@ var MultiviewMap = /** @class */ (function (_super) {
         _this.handleFocus = _this.handleFocus.bind(_this);
         _this.handleUrl = _this.handleUrl.bind(_this);
         _this.handleGeometry = _this.handleGeometry.bind(_this);
+        _this.pointToLayer = _this.pointToLayer.bind(_this);
         return _this;
     }
     MultiviewMap.prototype.handleHighlight = function (msg, data) {
@@ -18647,6 +18648,17 @@ var MultiviewMap = /** @class */ (function (_super) {
             geojson: data,
         });
     };
+    MultiviewMap.prototype.pointToLayer = function (geoJsonPoint, latlng) {
+        return new Leaflet.CircleMarker(latlng);
+    };
+    MultiviewMap.prototype.layerToBounds = function (layer) {
+        switch (layer.feature.geometry.type) {
+            case "Point":
+                return new Leaflet.LatLngBounds([layer.getLatLng()]);
+            default:
+                return layer.getBounds();
+        }
+    };
     MultiviewMap.prototype.componentDidMount = function () {
         var _this = this;
         this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
@@ -18657,7 +18669,7 @@ var MultiviewMap = /** @class */ (function (_super) {
         this._map.leafletElement.selectArea.setShiftKey(true);
         this._map.leafletElement.on('areaselected', function (e) {
             var selectedLayers = _this.state.layerList.filter(function (layer) {
-                return e.bounds.intersects(layer.getBounds());
+                return e.bounds.intersects(_this.layerToBounds(layer));
             });
             var selectedFeatureIds = selectedLayers.map(function (layer) { return Number(layer.feature.id); });
             _this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
@@ -18675,21 +18687,39 @@ var MultiviewMap = /** @class */ (function (_super) {
         this.state.layerList.push(layer);
         layer.on({
             mouseover: function () {
-                _this.state.controller.publish('mcv.select.highlight', Array.of(Number(layer.feature.id)));
+                _this.state.controller.publish('mcv.select.highlight', [Number(layer.feature.id)]);
             },
-            click: function () {
-                _this.state.controller.publish('mcv.select.focus', Array.of(Number(layer.feature.id)));
+            click: function (event) {
+                if (event.originalEvent.ctrlKey) {
+                    // no lodash here, otherwise just _.xor(focusedIds, [id])
+                    var id = Number(layer.feature.id);
+                    var focusedIds = new Set(_this.state.focusedIds);
+                    if (!focusedIds.delete(id)) {
+                        focusedIds.add(id);
+                    }
+                    ;
+                    _this.state.controller.publish('mcv.select.focus', Array.from(focusedIds));
+                }
+                else {
+                    _this.state.controller.publish('mcv.select.focus', [Number(layer.feature.id)]);
+                }
             }
         });
     };
     MultiviewMap.prototype.bounds = function () {
         var _this = this;
-        var focusedLayers = this.state.layerList.filter(function (layer) { return _this.state.focusedIds.includes(Number(layer.feature.id)); });
+        var focusedLayers = this.state.layerList.filter(function (layer) {
+            return _this.state.focusedIds.includes(Number(layer.feature.id));
+        });
         if (focusedLayers.length > 0) {
-            var bounds = focusedLayers.reduce(function (result, layer) {
-                return result.extend(layer.getBounds());
-            }, focusedLayers[0].getBounds());
-            return bounds;
+            console.log(focusedLayers);
+            var bounds = focusedLayers.map(function (layer) {
+                return _this.layerToBounds(layer);
+            });
+            var result = bounds.reduce(function (result, bounds) {
+                return result.extend(bounds);
+            }, bounds[0]);
+            return result;
         }
         else {
             return new Leaflet.LatLngBounds({
@@ -18707,7 +18737,7 @@ var MultiviewMap = /** @class */ (function (_super) {
             React.createElement(react_leaflet_1.Map, { ref: function (m) { return _this._map = m; }, bounds: this.bounds() },
                 React.createElement(react_leaflet_1.TileLayer, { attribution: "\u00A9 <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors", url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' }),
                 this.state.geojsonUrl && this.state.geojson &&
-                    React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, onEachFeature: this.onEachFeature }))));
+                    React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, pointToLayer: this.pointToLayer, onEachFeature: this.onEachFeature }))));
     };
     return MultiviewMap;
 }(React.Component));
@@ -26975,10 +27005,10 @@ var DebugView = /** @class */ (function (_super) {
         return (React.createElement("form", { onSubmit: this.handleSubmit },
             React.createElement("label", null,
                 "First highlighted Id:",
-                React.createElement("input", { type: 'number', name: 'highlightedId', value: this.state.highlightedId, onChange: this.handleInputChange })),
+                React.createElement("input", { type: 'number', name: 'highlightedId', value: this.state.highlightedId || '', onChange: this.handleInputChange })),
             React.createElement("label", null,
                 "FocusId:",
-                React.createElement("input", { type: "number", name: 'focusedId', value: this.state.focusedId, onChange: this.handleInputChange })),
+                React.createElement("input", { type: "number", name: 'focusedId', value: this.state.focusedId || '', onChange: this.handleInputChange })),
             React.createElement("label", null,
                 "GeoJsonURL:",
                 React.createElement("input", { type: "text", name: 'geojsonUrl', value: this.state.geojsonUrl || '', onChange: this.handleInputChange })),
