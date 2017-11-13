@@ -36,6 +36,7 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.handleFocus= this.handleFocus.bind(this);
     this.handleUrl= this.handleUrl.bind(this);
     this.handleGeometry= this.handleGeometry.bind(this);
+    this.pointToLayer = this.pointToLayer.bind(this);
   }
 
   handleHighlight(msg:string, data:any) {
@@ -61,6 +62,10 @@ export class MultiviewMap extends React.Component<Props, State> {
     this.setState({
       geojson: data,
     });
+  }
+
+  pointToLayer(geoJsonPoint:any, latlng: Leaflet.LatLng){
+    return new Leaflet.CircleMarker(latlng);
   }
 
   layerToBounds(layer: any): Leaflet.LatLngBounds{
@@ -155,6 +160,7 @@ export class MultiviewMap extends React.Component<Props, State> {
             key={this.state.geojsonUrl}
             data={this.state.geojson}
             style={this.featureStyle}
+            pointToLayer={this.pointToLayer}
             onEachFeature={this.onEachFeature}
           >
           </GeoJSON>
