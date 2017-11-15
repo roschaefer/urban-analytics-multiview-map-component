@@ -128,7 +128,6 @@ export class MultiviewMap extends React.Component<Props, State> {
       return this.state.focusedIds.includes(Number(layer.feature.id))
     });
     if (focusedLayers.length > 0) {
-      console.log(focusedLayers);
       let bounds: Leaflet.LatLngBounds[] = focusedLayers.map((layer) => {
         return this.layerToBounds(layer)
       });
