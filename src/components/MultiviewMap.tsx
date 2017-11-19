@@ -95,18 +95,24 @@ export class MultiviewMap extends React.Component<Props, State> {
     })
   }
 
-  featureStyle(feature: any): Leaflet.PathOptions{
-    let color = (this.state.focusedIds.includes(Number(feature.id))) ? Color('red') : Color('blue');
+  featureStyle(feature: geojson.Feature<geojson.GeometryObject>): Leaflet.PathOptions{
+    const fillColor = (this.state.focusedIds.includes(Number(feature.id))) ? Color('red') : Color('blue');
+    let color = fillColor;
+    let weight = 2;
+    let dashArray = '3';
     if (this.state.highlightedIds.includes(Number(feature.id))) {
-      color = color.lighten(0.5);
+      weight = 4;
+      color = 'white';
+      dashArray = '';
     }
-    return { color };
+    return { color, weight, fillColor, dashArray };
   }
 
-  onEachFeature(feature: geojson.Feature<geojson.GeometryObject>, layer: Leaflet.Layer){
+  onEachFeature(feature: geojson.Feature<geojson.GeometryObject>, layer: Leaflet.Path){
     this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
+        layer.bringToFront();
         this.state.controller.publish('mcv.select.highlight', [Number(feature.id)]);
       },
       click: (event: Leaflet.LeafletMouseEvent) => {
