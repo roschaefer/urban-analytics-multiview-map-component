@@ -1,6 +1,7 @@
 import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
+import * as geojson from 'geojson';
 import { MultiviewController } from '../MultiviewController';
 const SelectArea = require('leaflet-area-select');
 const Color = require('color');
@@ -102,7 +103,7 @@ export class MultiviewMap extends React.Component<Props, State> {
     return { color };
   }
 
-  onEachFeature(feature:any, layer: Leaflet.Layer){
+  onEachFeature(feature: geojson.Feature<geojson.GeometryObject>, layer: Leaflet.Layer){
     this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
@@ -110,7 +111,7 @@ export class MultiviewMap extends React.Component<Props, State> {
       },
       click: (event: Leaflet.LeafletMouseEvent) => {
         if(event.originalEvent.ctrlKey){
-          this.state.controller.publish('mcv.select.focus', this.xor(this.state.focusedIds, feature.id));
+          this.state.controller.publish('mcv.select.focus', this.xor(this.state.focusedIds, Number(feature.id)));
         } else {
           this.state.controller.publish('mcv.select.focus', [Number(feature.id)]);
         }
@@ -119,9 +120,8 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 
   xor(focusedIds: number[], featureId: number){
-    const id: number = Number(featureId);
     let focusedIdsSet: Set<Number> = new Set(focusedIds);
-    if(!focusedIdsSet.delete(id)) { focusedIdsSet.add(id) };
+    if(!focusedIdsSet.delete(featureId)) { focusedIdsSet.add(featureId) };
     return Array.from(focusedIdsSet);
   }
 
