@@ -102,25 +102,27 @@ export class MultiviewMap extends React.Component<Props, State> {
     return { color };
   }
 
-  onEachFeature(feature:any, layer:any){
+  onEachFeature(feature:any, layer: Leaflet.Layer){
     this.state.layerList.push(layer);
     layer.on({
       mouseover: () => {
-        this.state.controller.publish('mcv.select.highlight', [Number(layer.feature.id)]);
+        this.state.controller.publish('mcv.select.highlight', [Number(feature.id)]);
       },
       click: (event: Leaflet.LeafletMouseEvent) => {
         if(event.originalEvent.ctrlKey){
-          // no lodash here, otherwise just _.xor(focusedIds, [id])
-          const id: number = Number(layer.feature.id);
-          let focusedIds: Set<Number> = new Set(this.state.focusedIds);
-          if(!focusedIds.delete(id)) { focusedIds.add(id) };
-          this.state.controller.publish('mcv.select.focus', Array.from(focusedIds));
+          this.state.controller.publish('mcv.select.focus', this.xor(this.state.focusedIds, feature.id));
         } else {
-          this.state.controller.publish('mcv.select.focus', [Number(layer.feature.id)]);
+          this.state.controller.publish('mcv.select.focus', [Number(feature.id)]);
         }
-
       }
     });
+  }
+
+  xor(focusedIds: number[], featureId: number){
+    const id: number = Number(featureId);
+    let focusedIdsSet: Set<Number> = new Set(focusedIds);
+    if(!focusedIdsSet.delete(id)) { focusedIdsSet.add(id) };
+    return Array.from(focusedIdsSet);
   }
 
   bounds(): Leaflet.LatLngBounds {
