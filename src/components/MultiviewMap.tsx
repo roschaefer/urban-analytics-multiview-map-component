@@ -4,7 +4,6 @@ import * as Leaflet from 'leaflet';
 import * as geojson from 'geojson';
 import { MultiviewController } from '../MultiviewController';
 const SelectArea = require('leaflet-area-select');
-const Color = require('color');
 
 export interface  Props {
   controller: any;
@@ -93,10 +92,11 @@ export class MultiviewMap extends React.Component<Props, State> {
       const selectedFeatureIds = selectedLayers.map((layer) => { return Number(layer.feature.id) });
       this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
     })
+
   }
 
   featureStyle(feature: geojson.Feature<geojson.GeometryObject>): Leaflet.PathOptions{
-    const fillColor = (this.state.focusedIds.includes(Number(feature.id))) ? Color('red') : Color('blue');
+    const fillColor = (this.state.focusedIds.includes(Number(feature.id))) ? 'red' : 'blue';
     let color = fillColor;
     let weight = 2;
     let dashArray = '3';
