@@ -72,7 +72,7 @@ export class MultiviewMap extends React.Component<Props, State> {
   layerToBounds(layer: any): Leaflet.LatLngBounds{
     switch(layer.feature.geometry.type){
       case "Point":
-        return new Leaflet.LatLngBounds([layer.getLatLng()]);
+        return new Leaflet.LatLngBounds(layer.getLatLng(), layer.getLatLng());
       default:
         return layer.getBounds();
     }
