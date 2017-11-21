@@ -4,6 +4,7 @@ import * as Leaflet from 'leaflet';
 import * as geojson from 'geojson';
 import { MultiviewController } from '../MultiviewController';
 const SelectArea = require('leaflet-area-select');
+const MiniMap = require('leaflet-minimap');
 
 export interface  Props {
   controller: any;
@@ -93,6 +94,10 @@ export class MultiviewMap extends React.Component<Props, State> {
       this.state.controller.publish('mcv.select.focus', selectedFeatureIds);
     })
 
+    const osmUrl ='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+    const osmAttrib ='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    let layer = new Leaflet.TileLayer(osmUrl, {minZoom: 0, maxZoom: 13, attribution: osmAttrib});
+    new MiniMap(layer).addTo(this._map.leafletElement);
   }
 
   featureStyle(feature: geojson.Feature<geojson.GeometryObject>): Leaflet.PathOptions{
