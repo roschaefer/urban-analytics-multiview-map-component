@@ -2,7 +2,7 @@ import * as React from "react";
 import { MapProps, Map, TileLayer, GeoJSON} from 'react-leaflet';
 import * as Leaflet from 'leaflet';
 import * as geojson from 'geojson';
-import { MultiviewController } from '../MultiviewController';
+import { MultiviewCoordinator } from '../MultiviewCoordinator';
 const SelectArea = require('leaflet-area-select');
 const MiniMap = require('leaflet-minimap');
 
@@ -19,7 +19,7 @@ export interface  State {
   layerList: any [];
 }
 
-export class MultiviewMap extends React.Component<Props, State> {
+export class MapComponent extends React.Component<Props, State> {
   _map: any;
 
   constructor(props: Props) {
@@ -183,4 +183,4 @@ export class MultiviewMap extends React.Component<Props, State> {
   }
 }
 
-export default MultiviewMap;
+export default MapComponent;

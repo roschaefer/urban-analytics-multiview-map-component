@@ -14,25 +14,25 @@ export declare class DebugView extends React.Component<DebugView.Props, DebugVie
 }
 export namespace DebugView {
   export interface Props {
-    controller: MultiviewController;
+    controller: MultiviewCoordinator;
     focusedId?: number;
     highlightedId?: number;
     geojsonUrl?: string;
   }
   export interface State {
-    controller: MultiviewController;
+    controller: MultiviewCoordinator;
     highlightedId: number;
     focusedId: number;
     geojsonUrl: string;
   }
 }
-export declare class MultiviewController {
+export declare class MultiviewCoordinator {
   private _geojsonUrl;
   subscribe(msg: string, callback: (msg: string, data: any) => void): void;
   publish(msg: string, data: any): void;
   clearAllSubscriptions(): void;
 }
-export namespace MultiviewMap {
+export namespace MapComponent {
   export interface Props {
     controller: any;
   }
@@ -45,8 +45,8 @@ export namespace MultiviewMap {
     layerList: any[];
   }
 }
-export declare class MultiviewMap extends React.Component<MultiviewMap.Props, MultiviewMap.State> {
-  constructor(props: MultiviewMap.Props);
+export declare class MapComponent extends React.Component<MapComponent.Props, MapComponent.State> {
+  constructor(props: MapComponent.Props);
   handleHighlight(msg: string, data: any): void;
   handleFocus(msg: string, data: any): void;
   handleUrl(msg: string, data: any): void;
@@ -59,10 +59,10 @@ export declare class MultiviewMap extends React.Component<MultiviewMap.Props, Mu
 }
 export namespace MessageLog {
   export interface Props {
-    controller: MultiviewController;
+    controller: MultiviewCoordinator;
   }
   export interface State {
-    controller: MultiviewController;
+    controller: MultiviewCoordinator;
     messages: [string, any][];
   }
 }
@@ -73,4 +73,4 @@ export declare class MessageLog extends React.Component<MessageLog.Props, Messag
   render(): JSX.Element;
 }
 
-export default MultiviewMap;
+export default MapComponent;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
-import { MultiviewController } from '../MultiviewController';
+import { MultiviewCoordinator } from '../MultiviewCoordinator';
 import * as DebugView from './DebugView';
 import * as sinon from 'sinon';
 import * as fetchMock from 'fetch-mock';
@@ -11,12 +11,12 @@ import * as Adapter from 'enzyme-adapter-react-16';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('DebugView', () => {
-  let multiviewController: MultiviewController;
+  let multiviewController: MultiviewCoordinator;
 
   describe('form', () => {
     beforeEach(() => {
       fetchMock.get('*', {});
-      multiviewController = new MultiviewController();
+      multiviewController = new MultiviewCoordinator();
     });
 
     afterEach(() => {

@@ -1,14 +1,14 @@
 import * as React from "react";
-import { MultiviewController } from '../MultiviewController';
+import { MultiviewCoordinator } from '../MultiviewCoordinator';
 
 export interface Props {
-  controller: MultiviewController;
+  controller: MultiviewCoordinator;
   focusedId?: number;
   highlightedId?: number;
   geojsonUrl?: string;
 }
 export interface State{
-  controller: MultiviewController;
+  controller: MultiviewCoordinator;
   highlightedId: number;
   focusedId: number;
   geojsonUrl: string;

@@ -17245,10 +17245,10 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_91__;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var MultiviewController_1 = __webpack_require__(93);
-exports.MultiviewController = MultiviewController_1.MultiviewController;
-var MultiviewMap_1 = __webpack_require__(95);
-exports.MultiviewMap = MultiviewMap_1.MultiviewMap;
+var MultiviewCoordinator_1 = __webpack_require__(93);
+exports.MultiviewCoordinator = MultiviewCoordinator_1.MultiviewCoordinator;
+var MapComponent_1 = __webpack_require__(95);
+exports.MapComponent = MapComponent_1.MapComponent;
 var MessageLog_1 = __webpack_require__(239);
 exports.MessageLog = MessageLog_1.MessageLog;
 var DebugView_1 = __webpack_require__(240);
@@ -17263,13 +17263,13 @@ exports.DebugView = DebugView_1.DebugView;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var PubSub = __webpack_require__(94);
-var MultiviewController = /** @class */ (function () {
-    function MultiviewController() {
+var MultiviewCoordinator = /** @class */ (function () {
+    function MultiviewCoordinator() {
     }
-    MultiviewController.prototype.subscribe = function (msg, callback) {
+    MultiviewCoordinator.prototype.subscribe = function (msg, callback) {
         PubSub.subscribe(msg, callback);
     };
-    MultiviewController.prototype.publish = function (msg, data) {
+    MultiviewCoordinator.prototype.publish = function (msg, data) {
         if (msg === 'mcv.reconfigure.url') {
             if ((this._geojsonUrl == null) || (this._geojsonUrl !== data)) {
                 this._geojsonUrl = data;
@@ -17287,12 +17287,12 @@ var MultiviewController = /** @class */ (function () {
             PubSub.publish(msg, data);
         }
     };
-    MultiviewController.prototype.clearAllSubscriptions = function () {
+    MultiviewCoordinator.prototype.clearAllSubscriptions = function () {
         PubSub.clearAllSubscriptions();
     };
-    return MultiviewController;
+    return MultiviewCoordinator;
 }());
-exports.MultiviewController = MultiviewController;
+exports.MultiviewCoordinator = MultiviewCoordinator;
 
 
 /***/ }),
@@ -17582,9 +17582,9 @@ var react_leaflet_1 = __webpack_require__(96);
 var Leaflet = __webpack_require__(1);
 var SelectArea = __webpack_require__(236);
 var MiniMap = __webpack_require__(238);
-var MultiviewMap = /** @class */ (function (_super) {
-    __extends(MultiviewMap, _super);
-    function MultiviewMap(props) {
+var MapComponent = /** @class */ (function (_super) {
+    __extends(MapComponent, _super);
+    function MapComponent(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
             controller: props.controller,
@@ -17601,31 +17601,31 @@ var MultiviewMap = /** @class */ (function (_super) {
         _this.pointToLayer = _this.pointToLayer.bind(_this);
         return _this;
     }
-    MultiviewMap.prototype.handleHighlight = function (msg, data) {
+    MapComponent.prototype.handleHighlight = function (msg, data) {
         this.setState({
             highlightedIds: data,
         });
     };
-    MultiviewMap.prototype.handleFocus = function (msg, data) {
+    MapComponent.prototype.handleFocus = function (msg, data) {
         this.setState({
             focusedIds: data,
         });
         this._map.leafletElement.fitBounds(this.bounds());
     };
-    MultiviewMap.prototype.handleUrl = function (msg, data) {
+    MapComponent.prototype.handleUrl = function (msg, data) {
         this.setState({
             geojsonUrl: data,
         });
     };
-    MultiviewMap.prototype.handleGeometry = function (msg, data) {
+    MapComponent.prototype.handleGeometry = function (msg, data) {
         this.setState({
             geojson: data,
         });
     };
-    MultiviewMap.prototype.pointToLayer = function (geoJsonPoint, latlng) {
+    MapComponent.prototype.pointToLayer = function (geoJsonPoint, latlng) {
         return new Leaflet.CircleMarker(latlng);
     };
-    MultiviewMap.prototype.layerToBounds = function (layer) {
+    MapComponent.prototype.layerToBounds = function (layer) {
         switch (layer.feature.geometry.type) {
             case "Point":
                 return new Leaflet.LatLngBounds(layer.getLatLng(), layer.getLatLng());
@@ -17633,7 +17633,7 @@ var MultiviewMap = /** @class */ (function (_super) {
                 return layer.getBounds();
         }
     };
-    MultiviewMap.prototype.componentDidMount = function () {
+    MapComponent.prototype.componentDidMount = function () {
         var _this = this;
         this.state.controller.subscribe('mcv.select.focus', this.handleFocus);
         this.state.controller.subscribe('mcv.select.highlight', this.handleHighlight);
@@ -17653,7 +17653,7 @@ var MultiviewMap = /** @class */ (function (_super) {
         var layer = new Leaflet.TileLayer(osmUrl, { minZoom: 0, maxZoom: 13, attribution: osmAttrib });
         new MiniMap(layer).addTo(this._map.leafletElement);
     };
-    MultiviewMap.prototype.featureStyle = function (feature) {
+    MapComponent.prototype.featureStyle = function (feature) {
         var fillColor = (this.state.focusedIds.includes(Number(feature.id))) ? 'red' : 'blue';
         var color = fillColor;
         var weight = 2;
@@ -17665,7 +17665,7 @@ var MultiviewMap = /** @class */ (function (_super) {
         }
         return { color: color, weight: weight, fillColor: fillColor, dashArray: dashArray };
     };
-    MultiviewMap.prototype.onEachFeature = function (feature, layer) {
+    MapComponent.prototype.onEachFeature = function (feature, layer) {
         var _this = this;
         this.state.layerList.push(layer);
         layer.on({
@@ -17683,7 +17683,7 @@ var MultiviewMap = /** @class */ (function (_super) {
             }
         });
     };
-    MultiviewMap.prototype.xor = function (focusedIds, featureId) {
+    MapComponent.prototype.xor = function (focusedIds, featureId) {
         var focusedIdsSet = new Set(focusedIds);
         if (!focusedIdsSet.delete(featureId)) {
             focusedIdsSet.add(featureId);
@@ -17691,7 +17691,7 @@ var MultiviewMap = /** @class */ (function (_super) {
         ;
         return Array.from(focusedIdsSet);
     };
-    MultiviewMap.prototype.bounds = function () {
+    MapComponent.prototype.bounds = function () {
         var _this = this;
         var focusedLayers = this.state.layerList.filter(function (layer) {
             return _this.state.focusedIds.includes(Number(layer.feature.id));
@@ -17715,7 +17715,7 @@ var MultiviewMap = /** @class */ (function (_super) {
             });
         }
     };
-    MultiviewMap.prototype.render = function () {
+    MapComponent.prototype.render = function () {
         var _this = this;
         return (React.createElement("div", { className: "multiview-map-component" },
             React.createElement(react_leaflet_1.Map, { ref: function (m) { return _this._map = m; }, bounds: this.bounds() },
@@ -17723,10 +17723,10 @@ var MultiviewMap = /** @class */ (function (_super) {
                 this.state.geojsonUrl && this.state.geojson &&
                     React.createElement(react_leaflet_1.GeoJSON, { key: this.state.geojsonUrl, data: this.state.geojson, style: this.featureStyle, pointToLayer: this.pointToLayer, onEachFeature: this.onEachFeature }))));
     };
-    return MultiviewMap;
+    return MapComponent;
 }(React.Component));
-exports.MultiviewMap = MultiviewMap;
-exports.default = MultiviewMap;
+exports.MapComponent = MapComponent;
+exports.default = MapComponent;
 
 
 /***/ }),
@@ -24897,7 +24897,7 @@ L.Map.addInitHook('addHandler', 'selectArea', L.Map.SelectArea);
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(factory,window){if(true){!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))}else if(typeof exports==="object"){module.exports=factory(require("leaflet"))}if(typeof window!=="undefined"&&window.L){window.L.Control.MiniMap=factory(L);window.L.control.minimap=function(layer,options){return new window.L.Control.MiniMap(layer,options)}}})(function(L){var MiniMap=L.Control.extend({includes:L.Mixin.Events,options:{position:"bottomright",toggleDisplay:false,zoomLevelOffset:-5,zoomLevelFixed:false,centerFixed:false,zoomAnimation:false,autoToggleDisplay:false,minimized:false,width:150,height:150,collapsedWidth:19,collapsedHeight:19,aimingRectOptions:{color:"#ff7800",weight:1,clickable:false},shadowRectOptions:{color:"#000000",weight:1,clickable:false,opacity:0,fillOpacity:0},strings:{hideText:"Hide MiniMap",showText:"Show MiniMap"},mapOptions:{}},initialize:function(layer,options){L.Util.setOptions(this,options);this.options.aimingRectOptions.clickable=false;this.options.shadowRectOptions.clickable=false;this._layer=layer},onAdd:function(map){this._mainMap=map;this._container=L.DomUtil.create("div","leaflet-control-minimap");this._container.style.width=this.options.width+"px";this._container.style.height=this.options.height+"px";L.DomEvent.disableClickPropagation(this._container);L.DomEvent.on(this._container,"mousewheel",L.DomEvent.stopPropagation);var mapOptions={attributionControl:false,dragging:!this.options.centerFixed,zoomControl:false,zoomAnimation:this.options.zoomAnimation,autoToggleDisplay:this.options.autoToggleDisplay,touchZoom:this.options.centerFixed?"center":!this._isZoomLevelFixed(),scrollWheelZoom:this.options.centerFixed?"center":!this._isZoomLevelFixed(),doubleClickZoom:this.options.centerFixed?"center":!this._isZoomLevelFixed(),boxZoom:!this._isZoomLevelFixed(),crs:map.options.crs};mapOptions=L.Util.extend(this.options.mapOptions,mapOptions);this._miniMap=new L.Map(this._container,mapOptions);this._miniMap.addLayer(this._layer);this._mainMapMoving=false;this._miniMapMoving=false;this._userToggledDisplay=false;this._minimized=false;if(this.options.toggleDisplay){this._addToggleButton()}this._miniMap.whenReady(L.Util.bind(function(){this._aimingRect=L.rectangle(this._mainMap.getBounds(),this.options.aimingRectOptions).addTo(this._miniMap);this._shadowRect=L.rectangle(this._mainMap.getBounds(),this.options.shadowRectOptions).addTo(this._miniMap);this._mainMap.on("moveend",this._onMainMapMoved,this);this._mainMap.on("move",this._onMainMapMoving,this);this._miniMap.on("movestart",this._onMiniMapMoveStarted,this);this._miniMap.on("move",this._onMiniMapMoving,this);this._miniMap.on("moveend",this._onMiniMapMoved,this)},this));return this._container},addTo:function(map){L.Control.prototype.addTo.call(this,map);var center=this.options.centerFixed||this._mainMap.getCenter();this._miniMap.setView(center,this._decideZoom(true));this._setDisplay(this.options.minimized);return this},onRemove:function(map){this._mainMap.off("moveend",this._onMainMapMoved,this);this._mainMap.off("move",this._onMainMapMoving,this);this._miniMap.off("moveend",this._onMiniMapMoved,this);this._miniMap.removeLayer(this._layer)},changeLayer:function(layer){this._miniMap.removeLayer(this._layer);this._layer=layer;this._miniMap.addLayer(this._layer)},_addToggleButton:function(){this._toggleDisplayButton=this.options.toggleDisplay?this._createButton("",this._toggleButtonInitialTitleText(),"leaflet-control-minimap-toggle-display leaflet-control-minimap-toggle-display-"+this.options.position,this._container,this._toggleDisplayButtonClicked,this):undefined;this._toggleDisplayButton.style.width=this.options.collapsedWidth+"px";this._toggleDisplayButton.style.height=this.options.collapsedHeight+"px"},_toggleButtonInitialTitleText:function(){if(this.options.minimized){return this.options.strings.showText}else{return this.options.strings.hideText}},_createButton:function(html,title,className,container,fn,context){var link=L.DomUtil.create("a",className,container);link.innerHTML=html;link.href="#";link.title=title;var stop=L.DomEvent.stopPropagation;L.DomEvent.on(link,"click",stop).on(link,"mousedown",stop).on(link,"dblclick",stop).on(link,"click",L.DomEvent.preventDefault).on(link,"click",fn,context);return link},_toggleDisplayButtonClicked:function(){this._userToggledDisplay=true;if(!this._minimized){this._minimize()}else{this._restore()}},_setDisplay:function(minimize){if(minimize!==this._minimized){if(!this._minimized){this._minimize()}else{this._restore()}}},_minimize:function(){if(this.options.toggleDisplay){this._container.style.width=this.options.collapsedWidth+"px";this._container.style.height=this.options.collapsedHeight+"px";this._toggleDisplayButton.className+=" minimized-"+this.options.position;this._toggleDisplayButton.title=this.options.strings.showText}else{this._container.style.display="none"}this._minimized=true;this._onToggle()},_restore:function(){if(this.options.toggleDisplay){this._container.style.width=this.options.width+"px";this._container.style.height=this.options.height+"px";this._toggleDisplayButton.className=this._toggleDisplayButton.className.replace("minimized-"+this.options.position,"");this._toggleDisplayButton.title=this.options.strings.hideText}else{this._container.style.display="block"}this._minimized=false;this._onToggle()},_onMainMapMoved:function(e){if(!this._miniMapMoving){var center=this.options.centerFixed||this._mainMap.getCenter();this._mainMapMoving=true;this._miniMap.setView(center,this._decideZoom(true));this._setDisplay(this._decideMinimized())}else{this._miniMapMoving=false}this._aimingRect.setBounds(this._mainMap.getBounds())},_onMainMapMoving:function(e){this._aimingRect.setBounds(this._mainMap.getBounds())},_onMiniMapMoveStarted:function(e){if(!this.options.centerFixed){var lastAimingRect=this._aimingRect.getBounds();var sw=this._miniMap.latLngToContainerPoint(lastAimingRect.getSouthWest());var ne=this._miniMap.latLngToContainerPoint(lastAimingRect.getNorthEast());this._lastAimingRectPosition={sw:sw,ne:ne}}},_onMiniMapMoving:function(e){if(!this.options.centerFixed){if(!this._mainMapMoving&&this._lastAimingRectPosition){this._shadowRect.setBounds(new L.LatLngBounds(this._miniMap.containerPointToLatLng(this._lastAimingRectPosition.sw),this._miniMap.containerPointToLatLng(this._lastAimingRectPosition.ne)));this._shadowRect.setStyle({opacity:1,fillOpacity:.3})}}},_onMiniMapMoved:function(e){if(!this._mainMapMoving){this._miniMapMoving=true;this._mainMap.setView(this._miniMap.getCenter(),this._decideZoom(false));this._shadowRect.setStyle({opacity:0,fillOpacity:0})}else{this._mainMapMoving=false}},_isZoomLevelFixed:function(){var zoomLevelFixed=this.options.zoomLevelFixed;return this._isDefined(zoomLevelFixed)&&this._isInteger(zoomLevelFixed)},_decideZoom:function(fromMaintoMini){if(!this._isZoomLevelFixed()){if(fromMaintoMini){return this._mainMap.getZoom()+this.options.zoomLevelOffset}else{var currentDiff=this._miniMap.getZoom()-this._mainMap.getZoom();var proposedZoom=this._miniMap.getZoom()-this.options.zoomLevelOffset;var toRet;if(currentDiff>this.options.zoomLevelOffset&&this._mainMap.getZoom()<this._miniMap.getMinZoom()-this.options.zoomLevelOffset){if(this._miniMap.getZoom()>this._lastMiniMapZoom){toRet=this._mainMap.getZoom()+1;this._miniMap.setZoom(this._miniMap.getZoom()-1)}else{toRet=this._mainMap.getZoom()}}else{toRet=proposedZoom}this._lastMiniMapZoom=this._miniMap.getZoom();return toRet}}else{if(fromMaintoMini){return this.options.zoomLevelFixed}else{return this._mainMap.getZoom()}}},_decideMinimized:function(){if(this._userToggledDisplay){return this._minimized}if(this.options.autoToggleDisplay){if(this._mainMap.getBounds().contains(this._miniMap.getBounds())){return true}return false}return this._minimized},_isInteger:function(value){return typeof value==="number"},_isDefined:function(value){return typeof value!=="undefined"},_onToggle:function(){L.Util.requestAnimFrame(function(){L.DomEvent.on(this._container,"transitionend",this._fireToggleEvents,this);if(!L.Browser.any3d){L.Util.requestAnimFrame(this._fireToggleEvents,this)}},this)},_fireToggleEvents:function(){L.DomEvent.off(this._container,"transitionend",this._fireToggleEvents,this);var data={minimized:this._minimized};this.fire(this._minimized?"minimize":"restore",data);this.fire("toggle",data)}});L.Map.mergeOptions({miniMapControl:false});L.Map.addInitHook(function(){if(this.options.miniMapControl){this.miniMapControl=(new MiniMap).addTo(this)}});return MiniMap},window);
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))}else if(typeof exports==="object"){module.exports=factory(require("leaflet"))}if(typeof window!=="undefined"&&window.L){window.L.Control.MiniMap=factory(L);window.L.control.minimap=function(layer,options){return new window.L.Control.MiniMap(layer,options)}}})(function(L){var MiniMap=L.Control.extend({includes:L.Evented?L.Evented.prototype:L.Mixin.Events,options:{position:"bottomright",toggleDisplay:false,zoomLevelOffset:-5,zoomLevelFixed:false,centerFixed:false,zoomAnimation:false,autoToggleDisplay:false,minimized:false,width:150,height:150,collapsedWidth:19,collapsedHeight:19,aimingRectOptions:{color:"#ff7800",weight:1,clickable:false},shadowRectOptions:{color:"#000000",weight:1,clickable:false,opacity:0,fillOpacity:0},strings:{hideText:"Hide MiniMap",showText:"Show MiniMap"},mapOptions:{}},initialize:function(layer,options){L.Util.setOptions(this,options);this.options.aimingRectOptions.clickable=false;this.options.shadowRectOptions.clickable=false;this._layer=layer},onAdd:function(map){this._mainMap=map;this._container=L.DomUtil.create("div","leaflet-control-minimap");this._container.style.width=this.options.width+"px";this._container.style.height=this.options.height+"px";L.DomEvent.disableClickPropagation(this._container);L.DomEvent.on(this._container,"mousewheel",L.DomEvent.stopPropagation);var mapOptions={attributionControl:false,dragging:!this.options.centerFixed,zoomControl:false,zoomAnimation:this.options.zoomAnimation,autoToggleDisplay:this.options.autoToggleDisplay,touchZoom:this.options.centerFixed?"center":!this._isZoomLevelFixed(),scrollWheelZoom:this.options.centerFixed?"center":!this._isZoomLevelFixed(),doubleClickZoom:this.options.centerFixed?"center":!this._isZoomLevelFixed(),boxZoom:!this._isZoomLevelFixed(),crs:map.options.crs};mapOptions=L.Util.extend(this.options.mapOptions,mapOptions);this._miniMap=new L.Map(this._container,mapOptions);this._miniMap.addLayer(this._layer);this._mainMapMoving=false;this._miniMapMoving=false;this._userToggledDisplay=false;this._minimized=false;if(this.options.toggleDisplay){this._addToggleButton()}this._miniMap.whenReady(L.Util.bind(function(){this._aimingRect=L.rectangle(this._mainMap.getBounds(),this.options.aimingRectOptions).addTo(this._miniMap);this._shadowRect=L.rectangle(this._mainMap.getBounds(),this.options.shadowRectOptions).addTo(this._miniMap);this._mainMap.on("moveend",this._onMainMapMoved,this);this._mainMap.on("move",this._onMainMapMoving,this);this._miniMap.on("movestart",this._onMiniMapMoveStarted,this);this._miniMap.on("move",this._onMiniMapMoving,this);this._miniMap.on("moveend",this._onMiniMapMoved,this)},this));return this._container},addTo:function(map){L.Control.prototype.addTo.call(this,map);var center=this.options.centerFixed||this._mainMap.getCenter();this._miniMap.setView(center,this._decideZoom(true));this._setDisplay(this.options.minimized);return this},onRemove:function(map){this._mainMap.off("moveend",this._onMainMapMoved,this);this._mainMap.off("move",this._onMainMapMoving,this);this._miniMap.off("moveend",this._onMiniMapMoved,this);this._miniMap.removeLayer(this._layer)},changeLayer:function(layer){this._miniMap.removeLayer(this._layer);this._layer=layer;this._miniMap.addLayer(this._layer)},_addToggleButton:function(){this._toggleDisplayButton=this.options.toggleDisplay?this._createButton("",this._toggleButtonInitialTitleText(),"leaflet-control-minimap-toggle-display leaflet-control-minimap-toggle-display-"+this.options.position,this._container,this._toggleDisplayButtonClicked,this):undefined;this._toggleDisplayButton.style.width=this.options.collapsedWidth+"px";this._toggleDisplayButton.style.height=this.options.collapsedHeight+"px"},_toggleButtonInitialTitleText:function(){if(this.options.minimized){return this.options.strings.showText}else{return this.options.strings.hideText}},_createButton:function(html,title,className,container,fn,context){var link=L.DomUtil.create("a",className,container);link.innerHTML=html;link.href="#";link.title=title;var stop=L.DomEvent.stopPropagation;L.DomEvent.on(link,"click",stop).on(link,"mousedown",stop).on(link,"dblclick",stop).on(link,"click",L.DomEvent.preventDefault).on(link,"click",fn,context);return link},_toggleDisplayButtonClicked:function(){this._userToggledDisplay=true;if(!this._minimized){this._minimize()}else{this._restore()}},_setDisplay:function(minimize){if(minimize!==this._minimized){if(!this._minimized){this._minimize()}else{this._restore()}}},_minimize:function(){if(this.options.toggleDisplay){this._container.style.width=this.options.collapsedWidth+"px";this._container.style.height=this.options.collapsedHeight+"px";this._toggleDisplayButton.className+=" minimized-"+this.options.position;this._toggleDisplayButton.title=this.options.strings.showText}else{this._container.style.display="none"}this._minimized=true;this._onToggle()},_restore:function(){if(this.options.toggleDisplay){this._container.style.width=this.options.width+"px";this._container.style.height=this.options.height+"px";this._toggleDisplayButton.className=this._toggleDisplayButton.className.replace("minimized-"+this.options.position,"");this._toggleDisplayButton.title=this.options.strings.hideText}else{this._container.style.display="block"}this._minimized=false;this._onToggle()},_onMainMapMoved:function(e){if(!this._miniMapMoving){var center=this.options.centerFixed||this._mainMap.getCenter();this._mainMapMoving=true;this._miniMap.setView(center,this._decideZoom(true));this._setDisplay(this._decideMinimized())}else{this._miniMapMoving=false}this._aimingRect.setBounds(this._mainMap.getBounds())},_onMainMapMoving:function(e){this._aimingRect.setBounds(this._mainMap.getBounds())},_onMiniMapMoveStarted:function(e){if(!this.options.centerFixed){var lastAimingRect=this._aimingRect.getBounds();var sw=this._miniMap.latLngToContainerPoint(lastAimingRect.getSouthWest());var ne=this._miniMap.latLngToContainerPoint(lastAimingRect.getNorthEast());this._lastAimingRectPosition={sw:sw,ne:ne}}},_onMiniMapMoving:function(e){if(!this.options.centerFixed){if(!this._mainMapMoving&&this._lastAimingRectPosition){this._shadowRect.setBounds(new L.LatLngBounds(this._miniMap.containerPointToLatLng(this._lastAimingRectPosition.sw),this._miniMap.containerPointToLatLng(this._lastAimingRectPosition.ne)));this._shadowRect.setStyle({opacity:1,fillOpacity:.3})}}},_onMiniMapMoved:function(e){if(!this._mainMapMoving){this._miniMapMoving=true;this._mainMap.setView(this._miniMap.getCenter(),this._decideZoom(false));this._shadowRect.setStyle({opacity:0,fillOpacity:0})}else{this._mainMapMoving=false}},_isZoomLevelFixed:function(){var zoomLevelFixed=this.options.zoomLevelFixed;return this._isDefined(zoomLevelFixed)&&this._isInteger(zoomLevelFixed)},_decideZoom:function(fromMaintoMini){if(!this._isZoomLevelFixed()){if(fromMaintoMini){return this._mainMap.getZoom()+this.options.zoomLevelOffset}else{var currentDiff=this._miniMap.getZoom()-this._mainMap.getZoom();var proposedZoom=this._miniMap.getZoom()-this.options.zoomLevelOffset;var toRet;if(currentDiff>this.options.zoomLevelOffset&&this._mainMap.getZoom()<this._miniMap.getMinZoom()-this.options.zoomLevelOffset){if(this._miniMap.getZoom()>this._lastMiniMapZoom){toRet=this._mainMap.getZoom()+1;this._miniMap.setZoom(this._miniMap.getZoom()-1)}else{toRet=this._mainMap.getZoom()}}else{toRet=proposedZoom}this._lastMiniMapZoom=this._miniMap.getZoom();return toRet}}else{if(fromMaintoMini){return this.options.zoomLevelFixed}else{return this._mainMap.getZoom()}}},_decideMinimized:function(){if(this._userToggledDisplay){return this._minimized}if(this.options.autoToggleDisplay){if(this._mainMap.getBounds().contains(this._miniMap.getBounds())){return true}return false}return this._minimized},_isInteger:function(value){return typeof value==="number"},_isDefined:function(value){return typeof value!=="undefined"},_onToggle:function(){L.Util.requestAnimFrame(function(){L.DomEvent.on(this._container,"transitionend",this._fireToggleEvents,this);if(!L.Browser.any3d){L.Util.requestAnimFrame(this._fireToggleEvents,this)}},this)},_fireToggleEvents:function(){L.DomEvent.off(this._container,"transitionend",this._fireToggleEvents,this);var data={minimized:this._minimized};this.fire(this._minimized?"minimize":"restore",data);this.fire("toggle",data)}});L.Map.mergeOptions({miniMapControl:false});L.Map.addInitHook(function(){if(this.options.miniMapControl){this.miniMapControl=(new MiniMap).addTo(this)}});return MiniMap},window);
 
 /***/ }),
 /* 239 */
@@ -24936,7 +24936,7 @@ var MessageLog = /** @class */ (function (_super) {
         });
     };
     MessageLog.prototype.componentDidMount = function () {
-        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
+        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewCoordinatorChange);
         if (this.state.controller) {
             this.state.controller.subscribe('mcv', this.handleMessage);
         }

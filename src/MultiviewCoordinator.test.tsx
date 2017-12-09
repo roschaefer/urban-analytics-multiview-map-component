@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { MultiviewController } from './MultiviewController';
+import { MultiviewCoordinator } from './MultiviewCoordinator';
 import * as sinon from 'sinon';
 import * as fetchMock from 'fetch-mock';
 import * as Enzyme from 'enzyme';
@@ -12,11 +12,11 @@ const aGeojson:any = {
   "features": [ ]
 }
 
-describe("MultiviewController", function() {
+describe("MultiviewCoordinator", function() {
   describe('mcv.reconfigure.url', () => {
 
     it("makes http request and calls callback", (done) => {
-      const multiviewController = new MultiviewController();
+      const multiviewController = new MultiviewCoordinator();
       const handleGeometry = (msg:string, data:any) => {
         expect(data['type']).to.eq('FeatureCollection');
         done();

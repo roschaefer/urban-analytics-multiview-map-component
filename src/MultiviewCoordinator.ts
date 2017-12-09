@@ -1,6 +1,6 @@
 import PubSub = require('pubsub-js');
 
-export class MultiviewController {
+export class MultiviewCoordinator {
   private _geojsonUrl: string;
 
   public subscribe(msg:string, callback: (msg:string, data:any) => void) {

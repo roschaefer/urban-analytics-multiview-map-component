@@ -85,7 +85,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(1);
 var urban_analytics_multiview_map_component_1 = __webpack_require__(3);
-var controller = new urban_analytics_multiview_map_component_1.MultiviewController();
+var controller = new urban_analytics_multiview_map_component_1.MultiviewCoordinator();
 ReactDOM.render(React.createElement(urban_analytics_multiview_map_component_1.MultiviewMap, { controller: controller, lat: undefined, lng: undefined, zoom: 5 }), document.getElementById('multiview-map-component'));
 ReactDOM.render(React.createElement(urban_analytics_multiview_map_component_1.MessageLog, { controller: controller }), document.getElementById('multiview-message-log'));
 setTimeout(function () {
@@ -17277,8 +17277,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_90__;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var MultiviewController_1 = __webpack_require__(92);
-exports.MultiviewController = MultiviewController_1.MultiviewController;
+var MultiviewCoordinator_1 = __webpack_require__(92);
+exports.MultiviewCoordinator = MultiviewCoordinator_1.MultiviewCoordinator;
 var MultiviewMap_1 = __webpack_require__(94);
 exports.MultiviewMap = MultiviewMap_1.MultiviewMap;
 var MessageLog_1 = __webpack_require__(237);
@@ -17293,13 +17293,13 @@ exports.MessageLog = MessageLog_1.MessageLog;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var PubSub = __webpack_require__(93);
-var MultiviewController = (function () {
-    function MultiviewController() {
+var MultiviewCoordinator = (function () {
+    function MultiviewCoordinator() {
     }
-    MultiviewController.prototype.subscribe = function (msg, callback) {
+    MultiviewCoordinator.prototype.subscribe = function (msg, callback) {
         PubSub.subscribe(msg, callback);
     };
-    MultiviewController.prototype.publish = function (msg, data) {
+    MultiviewCoordinator.prototype.publish = function (msg, data) {
         var _this = this;
         if (msg === 'reconfigure url') {
             if (this._geojsonUrl !== data) {
@@ -17315,9 +17315,9 @@ var MultiviewController = (function () {
         }
         PubSub.publish(msg, data);
     };
-    return MultiviewController;
+    return MultiviewCoordinator;
 }());
-exports.MultiviewController = MultiviewController;
+exports.MultiviewCoordinator = MultiviewCoordinator;
 
 
 /***/ }),
@@ -17648,7 +17648,7 @@ var MultiviewMap = (function (_super) {
         });
     };
     MultiviewMap.prototype.componentDidMount = function () {
-        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
+        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewCoordinatorChange);
         if (this.state.controller) {
             this.state.controller.subscribe('select focus', this.handleFocus);
             this.state.controller.subscribe('select highlight', this.handleHighlight);
@@ -24626,7 +24626,7 @@ var MessageLog = (function (_super) {
         });
     };
     MessageLog.prototype.componentDidMount = function () {
-        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
+        // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewCoordinatorChange);
         if (this.state.controller) {
             this.state.controller.subscribe('select focus', this.handleMessage);
             this.state.controller.subscribe('select highlight', this.handleMessage);

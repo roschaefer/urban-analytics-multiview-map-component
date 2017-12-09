@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { MultiviewMap, MultiviewController, MessageLog, DebugView } from 'urban-analytics-multiview-map-component';
+import { MapComponent, MultiviewCoordinator, MessageLog, DebugView } from 'urban-analytics-multiview-map-component';
 
-let controller = new MultiviewController();
+let controller = new MultiviewCoordinator();
 
 
 ReactDOM.render(
-  <MultiviewMap controller={controller}/>,
+  <MapComponent controller={controller}/>,
   document.getElementById('multiview-map-component')
 );
 

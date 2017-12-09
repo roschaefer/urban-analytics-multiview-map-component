@@ -1,12 +1,12 @@
 import * as React from "react";
-import { MultiviewController } from '../MultiviewController';
+import { MultiviewCoordinator } from '../MultiviewCoordinator';
 
 export interface  Props {
-  controller: MultiviewController;
+  controller: MultiviewCoordinator;
 }
 
 export interface  State {
-  controller: MultiviewController;
+  controller: MultiviewCoordinator;
   messages: [string, any][];
 }
 
@@ -31,7 +31,7 @@ export class MessageLog extends React.Component<Props, State> {
 
 
   componentDidMount(){
-   // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewControllerChange);
+   // this.state.controller && this.state.controller.subscribe(this, this.handleMultiviewCoordinatorChange);
     if(this.state.controller) {
       this.state.controller.subscribe('mcv', this.handleMessage);
     }
